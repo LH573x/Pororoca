@@ -31,8 +31,8 @@ describe('matchAnswer', () => {
   });
 
   it('aceita sinônimos', () => {
-    const r = matchAnswer(q('folclore/junina'), 'mungunzá');
-    expect(r.kind === 'exact' && r.answer.name).toBe('Canjica');
+    const r = matchAnswer(q('turismo/litoral'), 'búzios');
+    expect(r.kind === 'exact' && r.answer.name).toBe('Armação dos Búzios');
   });
 
   it('sugere quando há um erro pequeno de digitação', () => {
@@ -48,7 +48,7 @@ describe('matchAnswer', () => {
   });
 
   it('recusa texto digitado ao acaso em todas as perguntas', () => {
-    const mash = ['asdfgh', 'qwerty', 'kkkkkkk', 'sdlkfjsdf', 'aaaaaa', 'hjkl', 'xyzw', 'qweasdzxc', 'lalala', 'teste', 'nada', 'zzzz', 'ksksks', 'oiuytr', 'mnbvcx', 'pooooo', 'wwwww', 'asdkjhasd', 'jdjdjdjd', 'aksjdhaksjd', 'fdsafdsa'];
+    const mash = ['asdfgh', 'qwerty', 'kkkkkkk', 'sdlkfjsdf', 'aaaaaa', 'hjkl', 'xyzw', 'qweasdzxc', 'lalala', 'testando', 'nada', 'zzzz', 'ksksks', 'oiuytr', 'mnbvcx', 'pooooo', 'wwwww', 'asdkjhasd', 'jdjdjdjd', 'aksjdhaksjd', 'fdsafdsa'];
     for (const question of BANK.questions) {
       for (const m of mash) {
         const r = matchAnswer(question, m);

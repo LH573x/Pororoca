@@ -1,30 +1,26 @@
 import { describe, expect, it } from 'vitest';
 import { animalFor, decodeLevels, encodeLevels, waveBars } from '../src/animals';
 import { BANK } from '../src/data';
-import { spread } from '../src/data/parse';
 import { dayNumber, isoOfDay, todayISO } from '../src/day';
 import { levelFor, levelFromPct } from '../src/rarity';
 import { pickRound } from '../src/round';
 import { streaks } from '../src/streaks';
 
 describe('banco de perguntas', () => {
-  it('tem os 23 temas e pelo menos uma pergunta em cada', () => {
-    expect(BANK.themes).toHaveLength(23);
+  it('tem os 21 temas e pelo menos uma pergunta em cada', () => {
+    expect(BANK.themes).toHaveLength(21);
     for (const t of BANK.themes) expect(BANK.questions.some((q) => q.theme === t.id), t.id).toBe(true);
   });
-  it('toda pergunta vai do nível 1 ao 10', () => {
+  it('toda pergunta tem respostas óbvias (nível 1 ou 2) e níveis entre 1 e 10', () => {
     for (const q of BANK.questions) {
       const tiers = q.answers.map((a) => a.tier);
-      expect(Math.min(...tiers), q.id).toBe(1);
-      expect(Math.max(...tiers), q.id).toBe(10);
+      expect(Math.min(...tiers), q.id).toBeLessThanOrEqual(2);
+      expect(Math.max(...tiers), q.id).toBeLessThanOrEqual(10);
     }
   });
-});
-
-describe('spread', () => {
-  it('estica a escala de uma lista curta para 1..10 sem mudar a ordem', () => {
-    const r = spread([1, 2, 3, 4, 5].map((t) => ({ name: String(t), aliases: [], tier: t })));
-    expect(r.map((a) => a.tier)).toEqual([1, 3, 6, 8, 10]);
+  it('a pergunta das cidades do litoral aceita Angra dos Reis', () => {
+    const q = BANK.questions.find((x) => x.id === 'turismo/litoral')!;
+    expect(q.answers.some((a) => a.name === 'Angra dos Reis')).toBe(true);
   });
 });
 

@@ -1,15 +1,18 @@
 import { buildBank } from './parse';
-import { cidades, comidas, futebol, novelas } from './temas/parte1';
-import { marcas, musica, natureza } from './temas/parte2';
-import { diaadia, folclore } from './temas/parte3';
-import { ciencia, esportes, famosos, filmes, historia, paises } from './temas/parte4';
-import { carros, desenhos, games } from './temas/parte5';
-import { doces, internet, moda, nomes, turismo } from './temas/parte6';
+import { ciencia, corpo } from './temas/ciencia';
+import { comidas } from './temas/comidas';
+import { desenhos, folclore, novelas } from './temas/cultura';
+import { esportes } from './temas/esportes';
+import { futebol } from './temas/futebol';
+import { cidades, litoral } from './temas/lugares';
+import { paises } from './temas/mundo';
+import { bairros, carros, historia, linguas, marcas, mitologia, musica, natureza } from './temas/outros';
+import { filmes, games } from './temas/telas';
 
-/** Os 23 temas, na ordem do documento de design. */
+/** Os temas do jogo. Só entram perguntas com universo fechado de respostas, que dá para conferir. */
 export const THEME_DEFS = [
-  comidas, cidades, futebol, novelas, musica, natureza, marcas, diaadia, folclore, famosos, filmes, paises,
-  esportes, historia, ciencia, carros, games, desenhos, moda, doces, internet, turismo, nomes,
+  comidas, cidades, litoral, bairros, paises, futebol, esportes, novelas, folclore, desenhos, filmes, games,
+  musica, natureza, marcas, carros, historia, linguas, mitologia, ciencia, corpo,
 ];
 
 export const BANK = buildBank(THEME_DEFS);
