@@ -7,7 +7,7 @@ import { chromium } from 'playwright-core';
 import { BANK } from '../src/data';
 const out = process.argv[2] ?? '.';
 const browser = await chromium.launch({ executablePath: process.env.CHROME ?? '/usr/bin/google-chrome', args: ['--no-sandbox'] });
-const page = await browser.newPage({ viewport: { width: 390, height: 780 }, deviceScaleFactor: 2 });
+const page = await browser.newPage({ viewport: { width: 360, height: 740 }, deviceScaleFactor: 2 });
 const errors: string[] = [];
 page.on('pageerror', (e: Error) => errors.push(e.message));
 page.on('console', (m: any) => m.type() === 'error' && errors.push(m.text()));
