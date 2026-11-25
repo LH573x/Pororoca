@@ -31,7 +31,18 @@ O site é estático. A cada push na `main`, o GitHub Actions testa e publica no 
 ## Raridade
 
 No começo ainda não há jogadores suficientes, então cada resposta tem um **nível estimado** (1 = comum, 10 = raríssima),
-escrito na própria lista. Cada lista é esticada para ir de 1 a 10.
+escrito na própria lista. Cada nível vale 100 km. A escala é a mesma para todas as listas e não é esticada:
+uma lista pequena (os países da América, por exemplo) não chega a 1000 km, porque nela não existe resposta tão rara.
+
+Como a estimativa é decidida:
+
+- nível 1 e 2: o que quase todo mundo escreve primeiro (Marte, Pelé, Copacabana);
+- 3 a 5: conhecido, mas já exige lembrar (Ganimedes, Zico, Urca);
+- 6 a 8: só quem conhece bem o assunto (Encélado, Zito, Vaz Lobo);
+- 9 e 10: o fundo da lista completa, que quase ninguém vai lembrar.
+
+Nas cidades o nível é o maior entre o da população (Censo 2022) e o da posição no ranking do estado,
+com exceções para cidades pequenas e famosas (Ouro Preto, Paraty, Jericoacoara).
 
 A estrutura para usar a frequência real já está pronta em `src/rarity.ts`, seguindo o documento de design:
 
@@ -60,8 +71,19 @@ Ficam em `src/data/temas/`, uma linha por nível:
 }
 ```
 
-As cidades vêm do Censo 2022 do IBGE (`npm run gen-cidades -- populacao-2022.csv`), com a raridade pela população
-e ajustes para cidades pequenas mas famosas.
+Só entram perguntas com um universo fechado de respostas, que dá para conferir numa fonte, e cada lista tenta
+ter todas as respostas possíveis. Fontes usadas:
+
+- cidades: Censo 2022 do IBGE (`scripts/dados/populacao-2022.csv`, gerado com `npm run gen-cidades`);
+- cidades do litoral: calculadas pelos limites municipais do IBGE e a linha da costa, tirando as que só têm
+  rio ou lagoa (`scripts/dados/litoral.csv`);
+- países e capitais: lista da ONU; elementos: IUPAC; constelações: União Astronômica Internacional;
+- futebol: listas de convocados de todas as Copas e participações no Brasileirão, da Wikipédia;
+- Fórmula 1, novelas, raças de cães, bairros do Rio, presidentes e companhias aéreas: listas da Wikipédia;
+- Pokémon: as 1025 espécies oficiais.
+
+`npm run check-data` confere nomes repetidos e listas curtas. `npm run export-review -- arquivo.md` gera um
+arquivo com todas as perguntas, respostas e pontos, para revisão.
 
 ## Estrutura
 

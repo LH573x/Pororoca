@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "check-data": "tsx scripts/check-data.ts",
-    "gen-cidades": "tsx scripts/gen-cidades.ts"
+    "gen-cidades": "tsx scripts/gen-cidades.ts",
+    "export-review": "tsx scripts/export-review.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.7",
