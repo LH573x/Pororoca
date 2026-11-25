@@ -82,6 +82,11 @@ ter todas as respostas possíveis. Fontes usadas:
 - futebol: listas de convocados de todas as Copas e participações no Brasileirão, da Wikipédia;
 - Fórmula 1, novelas, raças de cães, bairros do Rio, presidentes e companhias aéreas: listas da Wikipédia;
 - Pokémon: as 1025 espécies oficiais.
+- países sem litoral e de língua inglesa: pacote world-countries; OTAN, estados dos EUA e do México, sedes olímpicas,
+  presidentes dos EUA, reis de Portugal e da Inglaterra, imperadores romanos, Oscar, MCU, Premier League, Libertadores,
+  Champions, Bola de Ouro, nº 1 da ATP/WTA, universidades federais (MEC): listas oficiais de cada entidade.
+
+Pergunta nova entra com `desde: <dia>` para não mudar as rodadas que já foram jogadas.
 
 `npm run check-data` confere nomes repetidos e listas curtas. `npm run export-review -- arquivo.md` gera um
 arquivo com todas as perguntas, respostas e pontos, para revisão.
