@@ -30,7 +30,8 @@ for (let i = 0; i < 7; i++) {
     await page.screenshot({ path: `${out}/2-recusada.png` });
   }
   // na 2ª pergunta testa o "você quis dizer"
-  const ans = q.answers.filter((a) => a.name.length >= 6).sort((a, b) => b.tier - a.tier)[i % 3];
+  const long = q.answers.filter((a) => a.name.length >= 6).sort((a, b) => b.tier - a.tier);
+  const ans = long.length ? long[i % Math.min(3, long.length)] : q.answers[0];
   if (i === 1) {
     const typo = ans.name.slice(0, -2) + ans.name.slice(-1) + ans.name.slice(-2, -1);
     await page.fill('#inp', typo);
@@ -68,7 +69,7 @@ await page.waitForTimeout(300);
 await page.screenshot({ path: `${out}/8-arquivo.png` });
 await page.keyboard.press('Escape');
 // duelo pelo link
-await page.goto('http://localhost:4173/#duelo=abc123.5x32071');
+await page.goto('http://localhost:4173/#duelo=5x32071.' + BANK.questions.slice(0, 7).map((q) => q.id.replace('/', ':')).join(','));
 await page.waitForTimeout(500);
 await page.screenshot({ path: `${out}/9-duelo.png` });
 console.log('botão depois de jogar:', label);

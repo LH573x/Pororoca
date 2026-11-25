@@ -13,6 +13,8 @@ export interface Question {
   answers: Answer[];
   /** respostas que a regra proíbe, como a capital em "(que não seja a capital)" */
   excluded: string[];
+  /** primeiro desafio do dia em que a pergunta pode aparecer */
+  since: number;
 }
 
 export interface Theme {
@@ -34,6 +36,11 @@ export interface QuestionDef {
   a: string;
   /** proibidas pela regra, separadas por ";" (sinônimos com "|") */
   x?: string;
+  /**
+   * Número do primeiro desafio do dia em que a pergunta entra (padrão: 1).
+   * Pergunta nova precisa de um dia futuro, senão muda o sorteio de dias que já foram jogados.
+   */
+  desde?: number;
 }
 
 export interface ThemeDef {

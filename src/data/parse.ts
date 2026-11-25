@@ -36,7 +36,7 @@ export function buildBank(defs: ThemeDef[]): { themes: Theme[]; questions: Quest
   for (const t of defs) {
     themes.push({ id: t.id, name: t.name });
     for (const q of t.questions as QuestionDef[]) {
-      questions.push({ id: `${t.id}/${q.id}`, theme: t.id, text: q.t, rule: q.r, answers: spread(parseAnswers(q.a, `${t.id}/${q.id}`)), excluded: (q.x ?? '').split(/[;|]/).map((s) => s.trim()).filter(Boolean) });
+      questions.push({ id: `${t.id}/${q.id}`, theme: t.id, text: q.t, rule: q.r, answers: spread(parseAnswers(q.a, `${t.id}/${q.id}`)), excluded: (q.x ?? '').split(/[;|]/).map((s) => s.trim()).filter(Boolean), since: q.desde ?? 1 });
     }
   }
   return { themes, questions };

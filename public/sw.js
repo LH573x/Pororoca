@@ -12,10 +12,10 @@ self.addEventListener('fetch', (e) => {
       .then((res) => {
         if (res.ok) {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
+          e.waitUntil(caches.open(CACHE).then((c) => c.put(req, copy)));
         }
         return res;
       })
-      .catch(() => caches.match(req).then((r) => r || caches.match('./'))),
+      .catch(() => caches.match(req).then((r) => r || (req.mode === 'navigate' ? caches.match('./') : Response.error()))),
   );
 });

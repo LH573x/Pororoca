@@ -9,7 +9,11 @@ export interface SavedRound {
   done: boolean;
   /** pergunta que estava na tela e quando ela apareceu (o relógio não para se a pessoa sair) */
   pendingIdx?: number;
+  /** perguntas sorteadas para o dia, guardadas para a rodada não mudar se o banco mudar */
+  qids?: string[];
   pendingAt?: number;
+  /** terminado pelo arquivo, depois do dia (não conta na sequência) */
+  late?: boolean;
 }
 
 function read<T>(k: string): T | null {

@@ -15,7 +15,7 @@ import { randomSeed } from './random';
 import { pickRound } from './round';
 import { drawScene, fit, newScene, stepWave, type Wave } from './scene';
 import { COL, ICONS, MINI, pixelEmoji, sprite } from './sprites';
-import { allDays, loadDay, loadSeen, logRefused, saveDay, saveSeen, totalKm } from './storage';
+import { allDays, loadDay, loadSeen, logRefused, saveDay, saveSeen, totalKm, type SavedRound } from './storage';
 import { streaks } from './streaks';
 import type { Answer, Mode, Pick, Question } from './types';
 
@@ -24,6 +24,7 @@ const fmt = (n: number) => n.toLocaleString('pt-BR');
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const themeName = new Map(BANK.themes.map((t) => [t.id, t.name]));
+const questionById = new Map(BANK.questions.map((q) => [q.id, q]));
 
 // ---------- raridade real (desligada até existir um servidor) ----------
 let stats: StatsSource = noStats;
@@ -85,14 +86,21 @@ function refreshHome() {
   const saved = loadDay(n);
   const btn = $('playBtn');
   if (saved?.done) btn.textContent = `Hoje: ${fmt(totalKm(saved.picks))} km`;
-  else if (saved?.picks.length) btn.textContent = 'Continuar';
+  else if (saved?.picks.length || saved?.pendingAt) btn.textContent = 'Continuar';
   else btn.textContent = 'Jogar';
 }
 
 // ---------- começar rodadas ----------
+/** Rodada do dia N: a que ficou guardada, ou o sorteio só entre perguntas que já existiam nesse dia. */
+function dayQuestions(n: number, saved: SavedRound | null): Question[] {
+  const kept = saved?.qids?.map((id) => questionById.get(id));
+  if (kept && kept.length === WAVES && kept.every(Boolean)) return kept as Question[];
+  return pickRound(BANK.themes, BANK.questions.filter((q) => q.since <= n), `dia-${n}`);
+}
+
 function startDay(n: number) {
   const saved = loadDay(n);
-  const questions = pickRound(BANK.themes, BANK.questions, `dia-${n}`);
+  const questions = dayQuestions(n, saved);
   const mode: Mode = n === today() ? 'diario' : 'arquivo';
   round = { mode, seed: `dia-${n}`, day: n, questions, picks: saved?.picks.slice() ?? [] };
   if (saved?.done) return result(false);
@@ -104,15 +112,19 @@ function startInfinite() {
   const seed = 'inf-' + randomSeed();
   const questions = pickRound(BANK.themes, BANK.questions, seed, seen);
   questions.forEach((q) => seen.add(q.id));
-  // quando todas já foram vistas, começa a lista de novo
-  if (questions.every((q) => seen.has(q.id)) && seen.size >= BANK.questions.length) seen.clear();
+  // quando todas já foram vistas, começa a lista de novo (guardando as desta rodada)
+  if (seen.size >= BANK.questions.length) {
+    seen.clear();
+    questions.forEach((q) => seen.add(q.id));
+  }
   saveSeen(seen);
   round = { mode: 'infinito', seed, day: 0, questions, picks: [] };
   begin(0);
 }
 
-function startDuel(seed: string, rival?: number[]) {
-  const questions = pickRound(BANK.themes, BANK.questions, seed);
+function startDuel(seed: string, rival?: number[], qids?: string[]) {
+  const fixed = qids?.map((id) => questionById.get(id));
+  const questions = fixed?.every(Boolean) ? (fixed as Question[]) : pickRound(BANK.themes, BANK.questions, seed);
   round = { mode: 'duelo', seed, day: 0, questions, picks: [], rival };
   begin(0);
 }
@@ -121,6 +133,7 @@ function begin(from: number) {
   idx = from;
   wave = null;
   scenes.q = newScene();
+  $('gain').classList.remove('on');
   show('q');
   ask();
 }
@@ -145,7 +158,7 @@ function ask() {
   if (r.mode === 'diario' || r.mode === 'arquivo') {
     const saved = loadDay(r.day) ?? { day: r.day, picks: r.picks, done: false };
     if (saved.pendingIdx === idx && saved.pendingAt) left = Math.max(0, saved.pendingAt + SECS * 1000 - Date.now());
-    else saveDay({ ...saved, picks: r.picks, pendingIdx: idx, pendingAt: Date.now() });
+    else saveDay({ ...saved, picks: r.picks, qids: r.questions.map((x) => x.id), pendingIdx: idx, pendingAt: Date.now() });
   }
   deadline = Date.now() + left;
   timerOn = true;
@@ -208,7 +221,16 @@ function finish(text: string | null, answer: Answer | null) {
   const level = answer ? levelFor(q, answer, stats) : 0;
   r.picks.push({ qid: q.id, text, answer: answer?.name ?? null, level });
   if (answer) logAnswer({ qid: q.id, text: text?.slice(0, 60), answer: answer.name, level, mode: r.mode, day: r.day });
-  if (r.mode === 'diario' || r.mode === 'arquivo') saveDay({ day: r.day, picks: r.picks, done: r.picks.length >= WAVES });
+  if (r.mode === 'diario' || r.mode === 'arquivo') {
+    const prev = loadDay(r.day);
+    saveDay({
+      day: r.day,
+      picks: r.picks,
+      qids: r.questions.map((x) => x.id),
+      done: r.picks.length >= WAVES,
+      ...((r.mode === 'arquivo' || prev?.late) && { late: true }),
+    });
+  }
   $('qa').classList.add('hide');
   $('form').classList.add('hide');
   wave = { lv: level, t0: performance.now() };
@@ -249,9 +271,9 @@ function result(animate: boolean) {
       const rk = r.rival.reduce((s, l) => s + l * 100, 0);
       vs.innerHTML = total > rk ? `Você venceu! <b>${fmt(total)}</b> × ${fmt(rk)} km` : total < rk ? `Seu amigo venceu: ${fmt(total)} × <b>${fmt(rk)}</b> km` : `Empate: ${fmt(total)} km`;
       vs.hidden = false;
-      shareText = `Pororoca: duelo ${waveBars(levels)} ${fmt(total)} × ${fmt(rk)} km ${an[2]}\n${url}#duelo=${r.seed.replace(/^duelo-/, '')}.${encodeLevels(levels)}`;
+      shareText = `Pororoca: duelo ${waveBars(levels)} ${fmt(total)} × ${fmt(rk)} km ${an[2]}\n${url}${duelHash(r, levels)}`;
     } else {
-      shareText = `Te desafio no Pororoca! Cheguei a ${fmt(total)} km ${an[2]}. Consegue ir mais longe?\n${url}#duelo=${r.seed.replace(/^duelo-/, '')}.${encodeLevels(levels)}`;
+      shareText = `Te desafio no Pororoca! Cheguei a ${fmt(total)} km ${an[2]}. Consegue ir mais longe?\n${url}${duelHash(r, levels)}`;
     }
   } else {
     const tag = r.mode === 'infinito' ? '∞' : `#${r.day}`;
@@ -295,10 +317,11 @@ $('shareBtn').addEventListener('click', async () => {
 
 $('ansBtn').addEventListener('click', () => {
   const r = round!;
-  $('alist').innerHTML = r.questions
-    .map((q, i) => {
-      const p = r.picks[i];
-      if (!p) return '';
+  $('alist').innerHTML = r.picks
+    .map((p, i) => {
+      // a pergunta salva pode não ser mais a mesma da rodada sorteada hoje (banco mudou)
+      const q = questionById.get(p.qid) ?? r.questions[i];
+      if (!q) return '';
       const common = q.answers.reduce((a, b) => (b.tier < a.tier ? b : a));
       const rare = q.answers.reduce((a, b) => (b.tier > a.tier ? b : a));
       const me = p.answer === null ? '<em class="x">Tempo esgotado</em>' : `<em>${esc(p.answer)}</em>`;
@@ -314,6 +337,7 @@ $('homeBtn').addEventListener('click', () => show('home'));
 $('quitBtn').addEventListener('click', () => {
   timerOn = false;
   wave = null;
+  $('gain').classList.remove('on');
   show('home');
 });
 
@@ -323,7 +347,7 @@ $('archBtn').addEventListener('click', () => {
   const items: string[] = [];
   for (let d = n; d >= 1; d--) {
     const s = loadDay(d);
-    const k = s?.done ? `${fmt(totalKm(s.picks))} km` : s?.picks.length ? 'continuar' : 'jogar';
+    const k = s?.done ? `${fmt(totalKm(s.picks))} km` : s?.picks.length || s?.pendingAt ? 'continuar' : 'jogar';
     items.push(`<li><button data-day="${d}"><span class="n">#${d}</span><span class="d">${d === n ? 'Hoje' : formatDay(isoOfDay(d))}</span><span class="k ${s?.done ? '' : 'todo'}">${k}</span></button></li>`);
   }
   $('days').innerHTML = items.join('');
@@ -348,7 +372,8 @@ $('statsBtn').addEventListener('click', () => {
   const kms = done.map((r) => totalKm(r.picks));
   const avg = Math.round(kms.reduce((a, b) => a + b, 0) / kms.length / 10) * 10;
   const best = Math.max(...kms);
-  const { current, max } = streaks(done, n);
+  // sequência só conta desafios jogados no próprio dia, não os recuperados pelo arquivo
+  const { current, max } = streaks(done.filter((r) => !r.late), n);
   const counts = new Map<string, number>();
   kms.forEach((k) => {
     const a = animalFor(k);
@@ -364,7 +389,9 @@ $('statsBtn').addEventListener('click', () => {
 });
 
 // ---------- duelo ----------
-let pendingDuel: { seed: string; rival?: number[] } | null = null;
+let pendingDuel: { seed: string; rival?: number[]; qids?: string[] } | null = null;
+/** O link do duelo leva os níveis e as perguntas, para o amigo jogar exatamente as mesmas. */
+const duelHash = (r: Round, levels: number[]) => `#duelo=${encodeLevels(levels)}.${r.questions.map((q) => q.id.replace('/', ':')).join(',')}`;
 $('duelBtn').addEventListener('click', () => {
   pendingDuel = { seed: 'duelo-' + randomSeed() };
   $('duelText').innerHTML = 'Jogue 7 ondas e mande o link para um amigo.<small>Ele vai responder as mesmas perguntas, e vocês comparam até onde cada Capi chegou.</small>';
@@ -375,16 +402,20 @@ $('duelGo').addEventListener('click', () => {
   const d = pendingDuel;
   pendingDuel = null;
   closeSheets();
-  startDuel(d.seed, d.rival);
+  startDuel(d.seed, d.rival, d.qids);
 });
 function readDuelLink() {
-  const m = /^#duelo=([a-z0-9]{4,12})\.([0-9x]{7})$/.exec(location.hash);
+  const m = /^#duelo=([0-9x]{7})\.([a-z0-9:,_-]{1,400})$/.exec(location.hash);
   if (!m) return;
   history.replaceState(null, '', location.pathname + location.search);
-  const rival = decodeLevels(m[2]);
-  if (!rival) return;
+  const rival = decodeLevels(m[1]);
+  const qids = m[2].split(',').map((s) => s.replace(':', '/'));
+  if (!rival || qids.length !== WAVES || !qids.every((id) => questionById.has(id))) {
+    toast('Esse link de duelo não funciona mais');
+    return;
+  }
   const km = rival.reduce((s, l) => s + l * 100, 0);
-  pendingDuel = { seed: 'duelo-' + m[1], rival };
+  pendingDuel = { seed: 'duelo-link', rival, qids };
   $('duelText').innerHTML = `Um amigo chegou a <b>${fmt(km)} km</b> ${animalFor(km)[2]}<small>Responda as mesmas 7 perguntas e veja se a sua Capi vai mais longe.</small>`;
   openSheet('duel');
 }
