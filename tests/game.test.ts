@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { animalFor, decodeLevels, encodeLevels, waveBars } from '../src/animals';
 import { BANK } from '../src/data';
+import { stretch } from '../src/data/parse';
 import { dayNumber, isoOfDay, todayISO } from '../src/day';
 import { levelFor, levelFromPct } from '../src/rarity';
 import { pickRound } from '../src/round';
@@ -11,16 +12,23 @@ describe('banco de perguntas', () => {
     expect(BANK.themes).toHaveLength(21);
     for (const t of BANK.themes) expect(BANK.questions.some((q) => q.theme === t.id), t.id).toBe(true);
   });
-  it('toda pergunta tem respostas óbvias (nível 1 ou 2) e níveis entre 1 e 10', () => {
+  it('toda pergunta tem respostas óbvias (nível 1 ou 2) e a mais rara vale 1000 km', () => {
     for (const q of BANK.questions) {
       const tiers = q.answers.map((a) => a.tier);
       expect(Math.min(...tiers), q.id).toBeLessThanOrEqual(2);
-      expect(Math.max(...tiers), q.id).toBeLessThanOrEqual(10);
+      expect(Math.max(...tiers), q.id).toBe(10);
     }
   });
   it('a pergunta das cidades do litoral aceita Angra dos Reis', () => {
     const q = BANK.questions.find((x) => x.id === 'turismo/litoral')!;
     expect(q.answers.some((a) => a.name === 'Angra dos Reis')).toBe(true);
+  });
+});
+
+describe('stretch', () => {
+  it('leva o topo de uma lista curta a 10 sem inflar as respostas comuns', () => {
+    const r = stretch([1, 2, 3, 4, 5, 6].map((t) => ({ name: String(t), aliases: [], tier: t })));
+    expect(r.map((a) => a.tier)).toEqual([1, 2, 4, 6, 8, 10]);
   });
 });
 

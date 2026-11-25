@@ -31,8 +31,9 @@ O site é estático. A cada push na `main`, o GitHub Actions testa e publica no 
 ## Raridade
 
 No começo ainda não há jogadores suficientes, então cada resposta tem um **nível estimado** (1 = comum, 10 = raríssima),
-escrito na própria lista. Cada nível vale 100 km. A escala é a mesma para todas as listas e não é esticada:
-uma lista pequena (os países da América, por exemplo) não chega a 1000 km, porque nela não existe resposta tão rara.
+escrito na própria lista. Cada nível vale 100 km. A resposta mais rara de cada lista sempre vale 1000 km:
+uma lista que para antes (os países da América vão até o nível 6) é esticada com uma curva que puxa o topo
+mais do que a base, então as respostas comuns continuam valendo pouco (`stretch` em `src/data/parse.ts`).
 
 Como a estimativa é decidida:
 
