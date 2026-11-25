@@ -8,8 +8,8 @@ import { pickRound } from '../src/round';
 import { streaks } from '../src/streaks';
 
 describe('banco de perguntas', () => {
-  it('tem os 21 temas e pelo menos uma pergunta em cada', () => {
-    expect(BANK.themes).toHaveLength(21);
+  it('tem os 25 temas e pelo menos uma pergunta em cada', () => {
+    expect(BANK.themes).toHaveLength(25);
     for (const t of BANK.themes) expect(BANK.questions.some((q) => q.theme === t.id), t.id).toBe(true);
   });
   it('toda pergunta tem respostas óbvias (nível 1 ou 2) e a mais rara vale 1000 km', () => {
@@ -33,6 +33,11 @@ describe('stretch', () => {
 });
 
 describe('rodada', () => {
+  it('as perguntas novas só entram a partir do dia 2', () => {
+    const dia1 = BANK.questions.filter((q) => q.since <= 1);
+    expect(dia1).toHaveLength(47);
+    expect(BANK.questions.length).toBeGreaterThanOrEqual(94);
+  });
   it('a mesma semente dá a mesma rodada, com 7 temas diferentes', () => {
     const a = pickRound(BANK.themes, BANK.questions, 'dia-1');
     const b = pickRound(BANK.themes, BANK.questions, 'dia-1');

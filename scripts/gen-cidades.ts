@@ -43,7 +43,7 @@ const tierOfRank = (rank: number) => {
 const CAPITALS = new Set([
   'Belo Horizonte', 'São Paulo', 'Rio de Janeiro', 'Vitória', 'Porto Alegre', 'Curitiba', 'Florianópolis', 'Goiânia',
   'Salvador', 'Fortaleza', 'Recife', 'São Luís', 'Maceió', 'João Pessoa', 'Teresina', 'Natal', 'Aracaju',
-  'Manaus', 'Belém', 'Porto Velho', 'Rio Branco', 'Macapá', 'Boa Vista', 'Palmas',
+  'Manaus', 'Belém', 'Porto Velho', 'Rio Branco', 'Macapá', 'Boa Vista', 'Palmas', 'Cuiabá', 'Campo Grande',
 ]);
 
 // cidades que as pessoas lembram mais (ou menos) do que o tamanho sugere
@@ -92,6 +92,25 @@ const FAME: Record<string, number> = {
   Canudos: 5, Cachoeira: 5, Mucugê: 7, Piranhas: 6, Penedo: 5, 'São Cristóvão': 6, Parnaíba: 4, Sobral: 4,
   Crato: 4, Garanhuns: 4, Gravatá: 5, Triunfo: 7, 'Paulo Afonso': 4, Juazeiro: 3, 'Vitória da Conquista': 3,
   'Jaboatão dos Guararapes': 3, Caucaia: 4, Camaçari: 3, 'Lauro de Freitas': 4,
+  'Santa Cruz Cabrália': 5, Prado: 6, Canavieiras: 6, Maraú: 5,
+  Beberibe: 6, Canindé: 5, Quixadá: 5, Guaramiranga: 6, Iguatu: 5, Cabaceiras: 7, Bananeiras: 6, Areia: 6,
+  'Conde': 6, 'São Raimundo Nonato': 5, Oeiras: 6, 'Pedro II': 6, Imperatriz: 2, Caxias: 4,
+  Alcântara: 5, 'Santo Amaro do Maranhão': 6, Carolina: 6, Arapiraca: 2, 'São Miguel dos Milagres': 5,
+  Japaratinga: 6, 'Marechal Deodoro': 5, 'Delmiro Gouveia': 6, 'São Miguel do Gostoso': 5, Galinhos: 6,
+  Caicó: 4, 'Currais Novos': 5, Parnamirim: 3, Bezerros: 6, Goiana: 6, 'Santa Cruz do Capibaribe': 5,
+  'Ilha de Itamaracá': 5, 'Monte Santo': 7,
+  // ES
+  'Vila Velha': 1, Serra: 2, Cariacica: 2, Guarapari: 2, 'Cachoeiro de Itapemirim': 2, Linhares: 3,
+  'Domingos Martins': 4, 'Venda Nova do Imigrante': 5, 'Santa Teresa': 5, Colatina: 4, 'São Mateus': 4,
+  'Conceição da Barra': 6, Anchieta: 5, Aracruz: 5, Marataízes: 5, Piúma: 6,
+  // MT e MS
+  'Várzea Grande': 1, Rondonópolis: 2, Sinop: 2, 'Chapada dos Guimarães': 3, Cáceres: 4, Poconé: 5,
+  'Barra do Garças': 4, 'Nova Mutum': 6, 'Sorriso': 3, 'Lucas do Rio Verde': 4, 'Alta Floresta': 5, 'Tangará da Serra': 4,
+  'Primavera do Leste': 5, 'Campo Verde': 6, Nobres: 6,
+  Dourados: 1, Corumbá: 2, 'Três Lagoas': 2, Bonito: 2, 'Ponta Porã': 3, Aquidauana: 4, Miranda: 5,
+  Coxim: 5, 'Jardim': 6, Naviraí: 5, 'Bela Vista': 6,
+  // PA
+  Belterra: 6, Breves: 5, Tucuruí: 4, Redenção: 5,
 };
 
 // apelidos, grafias comuns e lugares conhecidos que ficam dentro do município
@@ -124,6 +143,9 @@ const ALIASES: Record<string, string[]> = {
   'Mata de São João': ['Praia do Forte'],
   'Porto Seguro': ['Trancoso', "Arraial d'Ajuda"],
   'Angra dos Reis': ['Angra'],
+  'Cachoeiro de Itapemirim': ['Cachoeiro'],
+  'Chapada dos Guimarães': ['Chapada'],
+  'Lucas do Rio Verde': ['Lucas'],
 };
 
 const NE = ['MA', 'PI', 'CE', 'RN', 'PB', 'PE', 'AL', 'SE', 'BA'];
@@ -132,6 +154,8 @@ const NORTE = ['AM', 'PA', 'AC', 'RO', 'RR', 'AP', 'TO'];
 /** Listas geradas: nome da constante -> estados incluídos. */
 const REGIONS: Record<string, string[]> = {
   MG: ['MG'], SP: ['SP'], RJ: ['RJ'], RS: ['RS'], PR: ['PR'], SC: ['SC'], GO: ['GO'], NE, NORTE,
+  BA: ['BA'], CE: ['CE'], PE: ['PE'], PB: ['PB'], RN: ['RN'], AL: ['AL'], MA: ['MA'], PI: ['PI'],
+  PA: ['PA'], ES: ['ES'], MT: ['MT'], MS: ['MS'],
 };
 
 function build(cities: City[]): string[] {
