@@ -49,7 +49,10 @@ canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .map{position:relative;flex:1;min-height:200px;margin:10px 0}
 .map .box{position:absolute;inset:0;margin:auto;aspect-ratio:96/62;max-width:100%;max-height:100%}
 .map canvas{width:100%;height:100%}
-.map span{position:absolute;font:500 14px/1 'Pixelify Sans';color:var(--mute);transform:translate(-50%,0);white-space:nowrap;background:var(--bg);padding:2px 4px}
+.map span{position:absolute;font:500 14px/1 'Pixelify Sans';color:var(--mute);white-space:nowrap;padding:2px 3px}
+.map span.country{font-size:12px;letter-spacing:.18em;color:#b59b80}
+.maptitle{position:absolute;left:0;right:0;top:0;margin:0;text-align:center;font:600 17px/1 'Pixelify Sans';color:var(--wa2);letter-spacing:.06em;z-index:1}
+.map .box{top:24px}
 .bars{display:flex;gap:8px;justify-content:center;align-items:flex-end;height:38px;margin:0 0 18px}
 .bars i{width:18px;background:var(--wa2);box-shadow:0 0 0 2px var(--ink)}
 .bars i.z{background:#2d201726;height:4px!important}
@@ -112,3 +115,16 @@ canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .panel .play{margin-top:20px}
 .empty{color:var(--mute);margin:18px 3px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* teclado aberto no celular: tudo encolhe para a pergunta continuar à vista */
+#app{height:var(--app-h,100dvh)}
+#app.kb .scr{padding-top:8px;padding-bottom:8px}
+#app.kb .top{min-height:34px}
+#app.kb .ico{width:34px;height:34px;font-size:18px}
+#app.kb .bar{margin-top:12px}
+#app.kb .theme{display:none}
+#app.kb .qtext{font-size:clamp(22px,6.4vw,28px);min-height:0;margin-top:8px}
+#app.kb .qtext small{font-size:15px;margin-top:4px}
+#app.kb .stage{min-height:0}
+#app.kb .hint{min-height:0;margin-bottom:6px}
+#app.kb .ans input,#app.kb .ans .go{height:46px}
+#app.kb .ans .go{width:46px}

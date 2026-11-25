@@ -486,6 +486,31 @@ function loop(now: number) {
   requestAnimationFrame(loop);
 }
 
+// ---------- teclado do celular ----------
+// O teclado encolhe a área visível. O app passa a ter a altura dessa área, então a pergunta
+// (em cima) e o campo de resposta (embaixo) continuam à vista, e a cena do rio encolhe no meio.
+const vv = window.visualViewport;
+let fullH = window.innerHeight;
+function fitViewport() {
+  if (!vv) return;
+  const app = $('app');
+  const h = Math.round(vv.height);
+  app.style.setProperty('--app-h', h + 'px');
+  // teclado aberto: a área visível ficou bem menor que a altura normal da página
+  const typing = document.activeElement === $('inp');
+  if (!typing) fullH = Math.max(h, window.innerHeight);
+  app.classList.toggle('kb', typing && h < fullH * 0.75);
+  if (vv.offsetTop || window.scrollY) window.scrollTo(0, 0);
+}
+vv?.addEventListener('resize', fitViewport);
+window.addEventListener('resize', () => {
+  if ($('r').classList.contains('on')) labelMap($('mapBox'));
+});
+vv?.addEventListener('scroll', fitViewport);
+$('inp').addEventListener('focus', () => setTimeout(fitViewport, 50));
+$('inp').addEventListener('blur', () => setTimeout(fitViewport, 50));
+fitViewport();
+
 refreshHome();
 readDuelLink();
 window.addEventListener('hashchange', readDuelLink);
