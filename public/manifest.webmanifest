@@ -1,0 +1,12 @@
+{
+  "name": "Pororoca",
+  "short_name": "Pororoca",
+  "description": "Trivia de respostas raras: quanto mais rara a resposta, maior a onda.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff6e9",
+  "theme_color": "#2d2017",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
