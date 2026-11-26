@@ -10,12 +10,15 @@ import { BANK } from './data';
 import { dayNumber, formatDay, isoOfDay, todayISO } from './day';
 import { drawMap, labelMap } from './map';
 import { matchAnswer } from './match';
+import { LiveDuel, other, pickOf, picksOf, rivalDone, startOf } from './live';
+import { online } from './online';
+import { cleanName, loadRanking, MODE_LABEL, submitScore } from './ranking';
 import { levelFor, noStats, type QuestionStats, type StatsSource } from './rarity';
 import { randomSeed } from './random';
 import { pickRound } from './round';
 import { drawScene, fit, newScene, stepWave, type Wave } from './scene';
 import { COL, ICONS, MINI, pixelEmoji, sprite } from './sprites';
-import { allDays, contestRefused, loadDay, loadSeen, logRefused, markContestsSent, pendingContests, saveDay, saveSeen, totalKm, type SavedRound } from './storage';
+import { allDays, contestRefused, loadDay, loadName, loadSeen, saveName, logRefused, markContestsSent, pendingContests, saveDay, saveSeen, totalKm, type SavedRound } from './storage';
 import { streaks } from './streaks';
 import type { Answer, Mode, Pick, Question } from './types';
 
@@ -54,6 +57,10 @@ interface Round {
   picks: Pick[];
   /** duelo: níveis do amigo que desafiou */
   rival?: number[];
+  /** duelo ao vivo: a sala no servidor */
+  live?: LiveDuel;
+  /** já entrou no ranking do dia */
+  ranked?: boolean;
 }
 let round: Round | null = null;
 let idx = 0;
@@ -62,6 +69,8 @@ let timerOn = false;
 let busy = false;
 let wave: Wave | null = null;
 let suggestion: Answer | null = null;
+/** duelo ao vivo: já respondeu e está esperando a hora da próxima pergunta */
+let waitingNext = false;
 
 const scenes = { home: newScene(), q: newScene() };
 
@@ -160,6 +169,11 @@ function ask() {
     if (saved.pendingIdx === idx && saved.pendingAt) left = Math.max(0, saved.pendingAt + SECS * 1000 - Date.now());
     else saveDay({ ...saved, picks: r.picks, qids: r.questions.map((x) => x.id), pendingIdx: idx, pendingAt: Date.now() });
   }
+  // no duelo ao vivo o relógio é o do servidor: os dois têm o mesmo fim
+  const st = r.live && startOf(r.live.room, idx);
+  if (r.live && st) left = Math.max(0, r.live.toLocal(st) + SECS * 1000 - Date.now());
+  waitingNext = false;
+  updateRival();
   deadline = Date.now() + left;
   timerOn = true;
   setTimeout(() => inp.focus(), 60);
@@ -230,6 +244,7 @@ function finish(text: string | null, answer: Answer | null) {
   const level = answer ? levelFor(q, answer, stats) : 0;
   r.picks.push({ qid: q.id, text, answer: answer?.name ?? null, level });
   if (answer) logAnswer({ qid: q.id, text: text?.slice(0, 60), answer: answer.name, level, mode: r.mode, day: r.day });
+  r.live?.sendPick(idx, { l: level, n: answer?.name ?? null });
   if (r.mode === 'diario' || r.mode === 'arquivo') {
     const prev = loadDay(r.day);
     saveDay({
@@ -247,8 +262,13 @@ function finish(text: string | null, answer: Answer | null) {
 
 function next() {
   idx++;
-  if (idx < round!.questions.length) ask();
-  else result(true);
+  if (idx >= round!.questions.length) return result(true);
+  // duelo ao vivo: a próxima só aparece quando os dois estiverem prontos (liveTick)
+  if (round!.live) {
+    waitingNext = true;
+    return liveTick();
+  }
+  ask();
 }
 
 $('form').addEventListener('submit', (e) => {
@@ -275,7 +295,10 @@ function result(animate: boolean) {
   const vs = $('vs');
   vs.hidden = true;
   const url = location.origin + location.pathname;
-  if (r.mode === 'duelo') {
+  if (r.live) {
+    vs.hidden = false;
+    updateVs();
+  } else if (r.mode === 'duelo') {
     if (r.rival) {
       const rk = r.rival.reduce((s, l) => s + l * 100, 0);
       vs.innerHTML = total > rk ? `Você venceu! <b>${fmt(total)}</b> × ${fmt(rk)} km` : total < rk ? `Seu amigo venceu: ${fmt(total)} × <b>${fmt(rk)}</b> km` : `Empate: ${fmt(total)} km`;
@@ -291,7 +314,8 @@ function result(animate: boolean) {
   const pend = pendingContests();
   $('contestBtn').hidden = pend.length === 0;
   $('contestBtn').textContent = pend.length === 1 ? 'Enviar 1 contestação' : `Enviar ${pend.length} contestações`;
-  $('shareBtn').textContent = r.mode === 'duelo' && !r.rival ? 'Desafiar' : 'Compartilhar';
+  $('shareBtn').textContent = r.mode === 'duelo' && !r.rival && !r.live ? 'Desafiar' : 'Compartilhar';
+  showRankForm();
   $('againBtn').hidden = r.mode !== 'infinito';
   $('ansBtn').parentElement!.style.gridTemplateColumns = r.mode === 'infinito' ? '' : '1fr';
   show('r');
@@ -361,8 +385,12 @@ $('contestBtn').addEventListener('click', () => {
 });
 
 $('againBtn').addEventListener('click', startInfinite);
-$('homeBtn').addEventListener('click', () => show('home'));
+$('homeBtn').addEventListener('click', () => {
+  leaveLive();
+  show('home');
+});
 $('quitBtn').addEventListener('click', () => {
+  leaveLive();
   timerOn = false;
   wave = null;
   $('gain').classList.remove('on');
@@ -421,11 +449,14 @@ let pendingDuel: { seed: string; rival?: number[]; qids?: string[] } | null = nu
 /** O link do duelo leva os níveis e as perguntas, para o amigo jogar exatamente as mesmas. */
 const duelHash = (r: Round, levels: number[]) => `#duelo=${encodeLevels(levels)}.${r.questions.map((q) => q.id.replace('/', ':')).join(',')}`;
 $('duelBtn').addEventListener('click', () => {
+  if (online()) return openLobby();
   pendingDuel = { seed: 'duelo-' + randomSeed() };
-  $('duelText').innerHTML = 'Jogue 7 ondas e mande o link para um amigo.<small>Ele vai responder as mesmas perguntas, e vocês comparam até onde cada Capi chegou.</small>';
+  duelAction = null;
+  setDuelSheet('Jogue 7 ondas e mande o link para um amigo.<small>Ele vai responder as mesmas perguntas, e vocês comparam até onde cada Capi chegou.</small>', 'Jogar');
   openSheet('duel');
 });
 $('duelGo').addEventListener('click', () => {
+  if (duelAction) return duelAction();
   if (!pendingDuel) return;
   const d = pendingDuel;
   pendingDuel = null;
@@ -433,6 +464,11 @@ $('duelGo').addEventListener('click', () => {
   startDuel(d.seed, d.rival, d.qids);
 });
 function readDuelLink() {
+  const sala = /^#sala=([a-z0-9]{4,12})$/.exec(location.hash);
+  if (sala) {
+    history.replaceState(null, '', location.pathname + location.search);
+    return openInvite(sala[1]);
+  }
   const m = /^#duelo=([0-9x]{7})\.([a-z0-9:,_-]{1,400})$/.exec(location.hash);
   if (!m) return;
   history.replaceState(null, '', location.pathname + location.search);
@@ -444,8 +480,275 @@ function readDuelLink() {
   }
   const km = rival.reduce((s, l) => s + l * 100, 0);
   pendingDuel = { seed: 'duelo-link', rival, qids };
-  $('duelText').innerHTML = `Um amigo chegou a <b>${fmt(km)} km</b> ${animalFor(km)[2]}<small>Responda as mesmas 7 perguntas e veja se a sua Capi vai mais longe.</small>`;
+  duelAction = null;
+  setDuelSheet(`Um amigo chegou a <b>${fmt(km)} km</b> ${animalFor(km)[2]}<small>Responda as mesmas 7 perguntas e veja se a sua Capi vai mais longe.</small>`, 'Jogar');
   openSheet('duel');
+}
+
+
+// ---------- duelo ao vivo ----------
+/** Sala aberta antes do jogo começar (criando ou entrando). */
+let lobby: LiveDuel | null = null;
+let lobbyQuestions: Question[] = [];
+/** O que o botão grande da folha do duelo faz agora (null = duelo antigo, por link). */
+let duelAction: (() => void) | null = null;
+const roomUrl = (id: string) => `${location.origin}${location.pathname}#sala=${id}`;
+const offline = () => toast('Sem conexão. Tente de novo.');
+
+function setDuelSheet(text: string, go: string | null, wait = '', link = '') {
+  $('duelText').innerHTML = text;
+  $('duelGo').hidden = go === null;
+  if (go) $('duelGo').textContent = go;
+  $('duelWait').hidden = !wait;
+  $('duelWait').textContent = wait;
+  $('duelWait').classList.toggle('go', /^\d$/.test(wait));
+  $('duelLink').hidden = !link;
+  $<HTMLInputElement>('duelUrl').value = link;
+}
+
+function openLobby() {
+  lobby?.close();
+  lobby = null;
+  setDuelSheet('Duelo ao vivo<small>Crie uma sala e mande o link para um amigo. Quando ele entrar, vocês dois começam juntos: as mesmas 7 perguntas, ao mesmo tempo.</small>', 'Criar sala');
+  duelAction = createRoom;
+  openSheet('duel');
+}
+
+async function createRoom() {
+  duelAction = null;
+  $('duelGo').hidden = true;
+  lobbyQuestions = pickRound(BANK.themes, BANK.questions, 'duelo-' + randomSeed());
+  try {
+    lobby = await LiveDuel.create(lobbyQuestions.map((q) => q.id));
+  } catch {
+    offline();
+    return openLobby();
+  }
+  const link = roomUrl(lobby.id);
+  setDuelSheet('Mande este link para o seu amigo<small>O duelo começa sozinho quando ele abrir o link e entrar.</small>', 'Enviar link', 'Esperando seu amigo entrar…', link);
+  duelAction = () => shareLink(link);
+  watchLobby();
+}
+
+async function shareLink(link: string) {
+  const text = `Duelo ao vivo no Pororoca! Entra aqui que a gente começa junto:\n${link}`;
+  try {
+    if (navigator.share && matchMedia('(pointer: coarse)').matches) return await navigator.share({ text });
+  } catch {
+    /* cancelado: cai para copiar */
+  }
+  copyLink(link);
+}
+async function copyLink(link: string) {
+  try {
+    await navigator.clipboard.writeText(link);
+    toast('Link copiado');
+  } catch {
+    $<HTMLInputElement>('duelUrl').select();
+  }
+}
+$('duelCopy').addEventListener('click', () => copyLink($<HTMLInputElement>('duelUrl').value));
+
+async function openInvite(id: string) {
+  if (!online()) return toast('Esse link de duelo não funciona aqui');
+  lobby?.close();
+  lobby = null;
+  let room;
+  try {
+    room = await LiveDuel.peek(id);
+  } catch {
+    return offline();
+  }
+  const qs = room?.qids?.split(',').map((q) => questionById.get(q));
+  if (!room || !qs || qs.length !== WAVES || !qs.every(Boolean)) return toast('Esse duelo não existe mais');
+  if (room.jog?.b || startOf(room, 0)) return toast('Esse duelo já começou');
+  lobbyQuestions = qs as Question[];
+  setDuelSheet('Seu amigo te chamou para um duelo ao vivo<small>Vocês dois respondem as mesmas 7 perguntas, ao mesmo tempo. Ganha quem levar a Capi mais longe.</small>', 'Entrar');
+  duelAction = async () => {
+    duelAction = null;
+    $('duelGo').hidden = true;
+    try {
+      lobby = await LiveDuel.join(id);
+    } catch {
+      offline();
+      return openInvite(id);
+    }
+    setDuelSheet('Você entrou no duelo!<small>Prepare-se: a primeira pergunta já vai aparecer.</small>', null, 'Começando…');
+    watchLobby();
+  };
+  openSheet('duel');
+}
+
+function watchLobby() {
+  const lv = lobby!;
+  lv.watch(
+    () => {
+      if (lv.role === 'a' && lv.room?.jog?.b && lobby === lv && !startOf(lv.room, 0)) setDuelSheet('Seu amigo entrou!<small>Prepare-se: a primeira pergunta já vai aparecer.</small>', null, 'Começando…');
+      liveTick();
+    },
+    () => toast('A conexão com o duelo caiu'),
+  );
+}
+
+/** Sai do duelo ao vivo (voltou para o início). */
+function leaveLive() {
+  round?.live?.close();
+  waitingNext = false;
+}
+
+/** Placar do duelo durante as perguntas: só conta as ondas que já passaram. */
+function updateRival() {
+  const r = round;
+  const el = $('rv');
+  if (!r?.live || !$('q').classList.contains('on')) return void (el.hidden = true);
+  const room = r.live.room;
+  const o = other(r.live.role);
+  const done = (role: 'a' | 'b') => Array.from({ length: idx }, (_, i) => pickOf(room, role, i)?.l ?? 0).reduce((s, l) => s + l * 100, 0);
+  const mine = r.picks.slice(0, idx).reduce((s, p) => s + p.level * 100, 0);
+  const answered = !!pickOf(room, o, idx);
+  el.hidden = false;
+  el.innerHTML = `<span>Você <b>${fmt(mine)} km</b></span><span>${answered ? '<span class="ok">✓</span> ' : ''}Amigo <b>${fmt(done(o))} km</b></span>`;
+}
+
+/** Resultado do duelo ao vivo: espera o amigo terminar. */
+function updateVs() {
+  const r = round!;
+  const lv = r.live!;
+  const total = totalKm(r.picks);
+  const theirs = picksOf(lv.room, other(lv.role));
+  const levels = r.picks.map((p) => p.level);
+  const an = animalFor(total);
+  const url = location.origin + location.pathname;
+  if (!rivalDone(lv.room, lv.role, lv.serverNow())) {
+    $('vs').innerHTML = `Esperando seu amigo terminar… (${theirs.length} de ${WAVES})`;
+    shareText = `Pororoca: duelo ao vivo ${waveBars(levels)} ${fmt(total)} km ${an[2]}\n${url}`;
+    return;
+  }
+  const rk = theirs.reduce((s, p) => s + p.l * 100, 0);
+  $('vs').innerHTML = total > rk ? `Você venceu! <b>${fmt(total)}</b> × ${fmt(rk)} km` : total < rk ? `Seu amigo venceu: ${fmt(total)} × <b>${fmt(rk)}</b> km` : `Empate: ${fmt(total)} km`;
+  shareText = `Pororoca: duelo ao vivo ${waveBars(levels)} ${fmt(total)} × ${fmt(rk)} km ${an[2]}\n${url}`;
+  lv.close();
+}
+
+/** Várias vezes por segundo: marca as próximas perguntas e começa cada uma na hora combinada. */
+function liveTick() {
+  if (lobby) {
+    const lv = lobby;
+    lv.tick();
+    const st = startOf(lv.room, 0);
+    if (st === undefined) return;
+    const left = lv.toLocal(st) - Date.now();
+    if (left > 0) {
+      $('duelWait').hidden = false;
+      $('duelWait').textContent = String(Math.ceil(left / 1000));
+      $('duelWait').classList.add('go');
+      return;
+    }
+    lobby = null;
+    duelAction = null;
+    closeSheets();
+    round = { mode: 'duelo', seed: 'sala-' + lv.id, day: 0, questions: lobbyQuestions, picks: [], live: lv };
+    return begin(0);
+  }
+  const r = round;
+  if (!r?.live) return;
+  r.live.tick();
+  if ($('q').classList.contains('on')) {
+    if (waitingNext) {
+      const st = startOf(r.live.room, idx);
+      const left = st === undefined ? Infinity : r.live.toLocal(st) - Date.now();
+      if (left <= 0) return ask();
+      setHint(`<span class="msg">${left === Infinity ? 'Esperando seu amigo responder…' : `Próxima pergunta em ${Math.ceil(left / 1000)}…`}</span>`);
+    }
+    updateRival();
+  } else if ($('r').classList.contains('on') && round?.live) updateVs();
+}
+
+// ---------- ranking do dia ----------
+/** A última entrada deste aparelho, para destacar na lista. */
+let myEntry: { nome: string; km: number } | null = null;
+
+function rankedAlready(r: Round) {
+  return r.ranked || ((r.mode === 'diario' || r.mode === 'arquivo') && !!loadDay(r.day)?.ranked);
+}
+
+function showRankForm() {
+  const r = round!;
+  const form = $('rankForm');
+  const msg = $('rankMsg');
+  if (!online()) {
+    form.hidden = msg.hidden = true;
+    return;
+  }
+  if (rankedAlready(r)) {
+    form.hidden = true;
+    msg.hidden = false;
+    msg.innerHTML = 'Essa partida já está no ranking de hoje.<button type="button" data-rank>ver</button>';
+    return;
+  }
+  form.hidden = false;
+  msg.hidden = true;
+  $<HTMLInputElement>('rankName').value = loadName();
+  $<HTMLButtonElement>('rankGo').disabled = false;
+}
+
+$('rankForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const r = round;
+  if (!r || rankedAlready(r)) return;
+  const nome = cleanName($<HTMLInputElement>('rankName').value);
+  if (!nome) {
+    const f = $('rankForm');
+    f.classList.remove('shake');
+    void f.offsetWidth;
+    f.classList.add('shake');
+    return $('rankName').focus();
+  }
+  const km = totalKm(r.picks);
+  $<HTMLButtonElement>('rankGo').disabled = true;
+  try {
+    const pos = await submitScore(today(), nome, km, r.mode);
+    r.ranked = true;
+    if (r.mode === 'diario' || r.mode === 'arquivo') {
+      const saved = loadDay(r.day);
+      if (saved) saveDay({ ...saved, ranked: true });
+    }
+    saveName(nome);
+    myEntry = { nome, km };
+    $<HTMLInputElement>('rankName').blur();
+    $('rankForm').hidden = true;
+    $('rankMsg').hidden = false;
+    $('rankMsg').innerHTML = `Você ficou em <b>${pos}º</b> no ranking de hoje.<button type="button" data-rank>ver</button>`;
+  } catch {
+    $<HTMLButtonElement>('rankGo').disabled = false;
+    offline();
+  }
+});
+$('rankMsg').addEventListener('click', (e) => {
+  if ((e.target as HTMLElement).closest('[data-rank]')) openRanking();
+});
+
+async function openRanking() {
+  const n = today();
+  $('rankDay').textContent = `${formatDay(isoOfDay(n))} · todas as partidas do dia`;
+  const list = $('rankList');
+  list.innerHTML = '<li class="empty">Carregando…</li>';
+  openSheet('ranking');
+  try {
+    const rows = await loadRanking(n);
+    let marked = false;
+    list.innerHTML = rows.length
+      ? rows
+          .map((e, i) => {
+            const me = !marked && myEntry && e.nome === myEntry.nome && e.km === myEntry.km;
+            if (me) marked = true;
+            return `<li class="${me ? 'me' : ''}"><span class="p">${i + 1}º</span><span class="nm">${esc(e.nome)}</span><span class="md">${MODE_LABEL[e.modo] ?? ''}</span><span class="k">${fmt(e.km)} km</span></li>`;
+          })
+          .join('')
+      : '<li class="empty">Ninguém entrou no ranking hoje ainda. Jogue e seja o primeiro!</li>';
+  } catch {
+    list.innerHTML = '<li class="empty">Sem conexão. Tente de novo daqui a pouco.</li>';
+  }
 }
 
 // ---------- folhas (regras, respostas, arquivo, estatísticas, duelo) ----------
@@ -457,6 +760,11 @@ function openSheet(id: string) {
   s.querySelector<HTMLElement>('[data-close]')?.focus();
 }
 function closeSheets() {
+  // fechou a sala antes de começar: desiste do duelo
+  if (lobby && $('duel').classList.contains('on')) {
+    lobby.close();
+    lobby = null;
+  }
   document.querySelectorAll('.sheet.on').forEach((s) => s.classList.remove('on'));
   if ($('q').classList.contains('on') && !busy) $('inp').focus();
   else lastFocus?.focus();
@@ -492,6 +800,8 @@ document.querySelectorAll<HTMLCanvasElement>('[data-icon]').forEach((cv) => {
 
 // ---------- navegação ----------
 $('playBtn').addEventListener('click', () => startDay(today()));
+$('rankBtn').hidden = !online();
+$('rankBtn').addEventListener('click', openRanking);
 $('infBtn').addEventListener('click', startInfinite);
 
 // ---------- laço de animação ----------
@@ -543,6 +853,7 @@ refreshHome();
 readDuelLink();
 window.addEventListener('hashchange', readDuelLink);
 requestAnimationFrame(loop);
+setInterval(liveTick, 200);
 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});

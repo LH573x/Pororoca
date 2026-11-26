@@ -14,6 +14,8 @@ export interface SavedRound {
   pendingAt?: number;
   /** terminado pelo arquivo, depois do dia (não conta na sequência) */
   late?: boolean;
+  /** já entrou no ranking do dia */
+  ranked?: boolean;
 }
 
 function read<T>(k: string): T | null {
@@ -82,3 +84,7 @@ export function markContestsSent() {
 }
 
 export const totalKm = (picks: Pick[]) => picks.reduce((s, p) => s + p.level * 100, 0);
+
+/** Nome usado no ranking da última vez, para não precisar digitar de novo. */
+export const loadName = () => read<string>('nome') ?? '';
+export const saveName = (n: string) => write('nome', n);

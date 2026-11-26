@@ -10,7 +10,8 @@
     "test": "vitest run",
     "check-data": "tsx scripts/check-data.ts",
     "gen-cidades": "tsx scripts/gen-cidades.ts",
-    "export-review": "tsx scripts/export-review.ts"
+    "export-review": "tsx scripts/export-review.ts",
+    "servidor-teste": "tsx scripts/servidor-teste.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.7",
