@@ -30,6 +30,13 @@ describe('banco de perguntas', () => {
     expect(f.aliases).toContain('Confissões de um Liquidificador');
     expect(f.tier).toBeGreaterThanOrEqual(7);
   });
+  it('as listas que mudam com o tempo estão em dia (novembro de 2026)', () => {
+    const has = (id: string, name: string) => BANK.questions.find((x) => x.id === id)!.answers.some((a) => a.name === name);
+    expect(has('esportes/campeaof1', 'Kimi Antonelli')).toBe(true);
+    expect(has('futebol/melhor', 'Harry Kane')).toBe(true);
+    expect(has('esportes/tenista', 'Elena Rybakina')).toBe(true);
+    expect(has('mundo/moeda', 'Lev')).toBe(false);
+  });
   it('a pergunta das cidades do litoral aceita Angra dos Reis', () => {
     const q = BANK.questions.find((x) => x.id === 'turismo/litoral')!;
     expect(q.answers.some((a) => a.name === 'Angra dos Reis')).toBe(true);
