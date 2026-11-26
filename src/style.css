@@ -130,4 +130,5 @@ canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 #app.kb .hint{min-height:0;margin-bottom:6px}
 #app.kb .ans input,#app.kb .ans .go{height:46px}
 #app.kb .ans .go{width:46px}
+[hidden]{display:none!important}
 .credit{margin:14px 0 0;text-align:center;font:500 13px/1 var(--f);color:var(--mute);opacity:.7}

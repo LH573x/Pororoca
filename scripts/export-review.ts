@@ -5,6 +5,7 @@
  */
 import { writeFileSync } from 'node:fs';
 import { BANK } from '../src/data';
+import { CRITERIOS, SEM_METRICA } from '../src/data/criterios';
 
 const out = process.argv[2] ?? 'revisao-perguntas.md';
 const lines: string[] = [];
@@ -17,10 +18,15 @@ const dist = Array.from({ length: 10 }, (_, i) => all.filter((t) => t === i + 1)
 lines.push('| km | respostas | % |', '|---:|---:|---:|');
 dist.forEach((n, i) => lines.push(`| ${(i + 1) * 100} | ${n} | ${((n / all.length) * 100).toFixed(1)}% |`));
 lines.push('');
+const semMetrica = BANK.questions.filter((q) => CRITERIOS[q.id]?.startsWith(SEM_METRICA));
+lines.push('## Mínimo adotado', '');
+lines.push('Cada pergunta diz o que precisa ter para entrar na lista (o menor número em que a fonte lista todos). "Lista fechada" quer dizer que a fonte já tem o universo inteiro.', '');
+lines.push(`Ainda sem métrica (${semMetrica.length}, para resolver depois): ${semMetrica.map((q) => q.text).join('; ')}.`, '');
 for (const t of BANK.themes) {
   lines.push(`## ${t.name}`, '');
   for (const q of BANK.questions.filter((x) => x.theme === t.id)) {
     lines.push(`### ${q.text}${q.rule ? ` (${q.rule})` : ''}`, '');
+    lines.push(`**Mínimo:** ${CRITERIOS[q.id] ?? '(falta)'}`, '');
     lines.push(`\`${q.id}\` · ${q.answers.length} respostas${q.excluded.length ? ` · recusadas pela regra: ${q.excluded.join(', ')}` : ''}`, '');
     for (let lv = 1; lv <= 10; lv++) {
       const as = q.answers.filter((a) => a.tier === lv);

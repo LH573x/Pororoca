@@ -5,7 +5,7 @@ import '@fontsource/pixelify-sans/700.css';
 import './style.css';
 
 import { animalFor, decodeLevels, encodeLevels, waveBars } from './animals';
-import { ANSWER_LOG_URL, MAX_KM, SECS, STATS_URL, WAVES } from './config';
+import { ANSWER_LOG_URL, CONTEST_URL, MAX_KM, SECS, STATS_URL, WAVES } from './config';
 import { BANK } from './data';
 import { dayNumber, formatDay, isoOfDay, todayISO } from './day';
 import { drawMap, labelMap } from './map';
@@ -15,7 +15,7 @@ import { randomSeed } from './random';
 import { pickRound } from './round';
 import { drawScene, fit, newScene, stepWave, type Wave } from './scene';
 import { COL, ICONS, MINI, pixelEmoji, sprite } from './sprites';
-import { allDays, loadDay, loadSeen, logRefused, saveDay, saveSeen, totalKm, type SavedRound } from './storage';
+import { allDays, contestRefused, loadDay, loadSeen, logRefused, markContestsSent, pendingContests, saveDay, saveSeen, totalKm, type SavedRound } from './storage';
 import { streaks } from './streaks';
 import type { Answer, Mode, Pick, Question } from './types';
 
@@ -201,11 +201,20 @@ function submit(text: string) {
     return;
   }
   shake();
-  setHint(`<span class="msg">${m.reason === 'curta' ? 'Escreva uma resposta' : m.reason === 'regra' ? 'Essa a regra não deixa. Tente outra!' : 'Essa não vale. Tente outra!'}</span>`);
-  if (m.reason === 'desconhecida') {
-    logRefused({ qid: q.id, text: text.slice(0, 60), at: new Date().toISOString() });
-    logAnswer({ qid: q.id, text: text.slice(0, 60), answer: null });
+  if (m.reason !== 'desconhecida') {
+    setHint(`<span class="msg">${m.reason === 'curta' ? 'Escreva uma resposta' : 'Essa a regra não deixa. Tente outra!'}</span>`);
+    return;
   }
+  const typed = text.slice(0, 60);
+  logRefused({ qid: q.id, text: typed, at: new Date().toISOString() });
+  logAnswer({ qid: q.id, text: typed, answer: null });
+  // a lista pode não ter uma resposta certa e rara: o jogador contesta e alguém confere depois
+  setHint(`<span class="msg">Essa não vale.</span><button type="button" id="contest" class="no">contestar</button>`);
+  $('contest').addEventListener('click', () => {
+    contestRefused(q.id, typed);
+    setHint('<span class="msg">Contestação guardada. Tente outra!</span>');
+    $('inp').focus();
+  });
 }
 
 /** Fecha a pergunta: answer null = tempo esgotado (0 km). */
@@ -279,6 +288,9 @@ function result(animate: boolean) {
     const tag = r.mode === 'infinito' ? '∞' : `#${r.day}`;
     shareText = `Pororoca ${tag} ${waveBars(levels)} ${fmt(total)} km ${an[2]}\n${url}`;
   }
+  const pend = pendingContests();
+  $('contestBtn').hidden = pend.length === 0;
+  $('contestBtn').textContent = pend.length === 1 ? 'Enviar 1 contestação' : `Enviar ${pend.length} contestações`;
   $('shareBtn').textContent = r.mode === 'duelo' && !r.rival ? 'Desafiar' : 'Compartilhar';
   $('againBtn').hidden = r.mode !== 'infinito';
   $('ansBtn').parentElement!.style.gridTemplateColumns = r.mode === 'infinito' ? '' : '1fr';
@@ -330,6 +342,22 @@ $('ansBtn').addEventListener('click', () => {
     })
     .join('');
   openSheet('answers');
+});
+
+/** Abre uma issue já preenchida com as respostas contestadas, para conferir e incluir na lista. */
+$('contestBtn').addEventListener('click', () => {
+  const pend = pendingContests();
+  if (!pend.length) return;
+  const lines = pend.map((c) => {
+    const q = questionById.get(c.qid);
+    return `- **${q ? q.text : c.qid}** (\`${c.qid}\`): ${c.text}`;
+  });
+  const body = `O jogo recusou estas respostas e eu acho que elas valem:\n\n${lines.join('\n')}\n\n(Se puder, diga onde conferir: link do IMDb, da Wikipédia, do IBGE etc.)`;
+  const title = pend.length === 1 ? `Contestação: "${pend[0].text}"` : `Contestação: ${pend.length} respostas`;
+  const url = `${CONTEST_URL}?${new URLSearchParams({ title, body, labels: 'contestação' })}`;
+  window.open(url, '_blank', 'noopener');
+  markContestsSent();
+  $('contestBtn').hidden = true;
 });
 
 $('againBtn').addEventListener('click', startInfinite);

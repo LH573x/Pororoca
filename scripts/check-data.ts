@@ -4,6 +4,7 @@
  * Uso: npm run check-data
  */
 import { BANK } from '../src/data';
+import { CRITERIOS } from '../src/data/criterios';
 import { compact, norm } from '../src/normalize';
 
 let errors = 0;
@@ -23,6 +24,10 @@ for (const q of BANK.questions) {
       }
       seen.set(k, a.name);
     }
+  }
+  if (!CRITERIOS[q.id]) {
+    console.log(`SEM CRITÉRIO ${q.id}: diga o mínimo adotado em src/data/criterios.ts`);
+    errors++;
   }
   if (q.answers.length < MIN) {
     console.log(`CURTA ${q.id}: só ${q.answers.length} respostas`);

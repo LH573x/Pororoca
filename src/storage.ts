@@ -52,6 +52,10 @@ export interface Refused {
   qid: string;
   text: string;
   at: string;
+  /** o jogador apertou "contestar": acha que a resposta vale */
+  contested?: boolean;
+  /** a contestação já foi enviada para revisão */
+  sent?: boolean;
 }
 /** Respostas recusadas ficam guardadas para revisarmos as listas depois. */
 export function logRefused(r: Refused) {
@@ -60,5 +64,21 @@ export function logRefused(r: Refused) {
   write('recusadas', list.slice(-300));
 }
 export const loadRefused = () => read<Refused[]>('recusadas') ?? [];
+
+/** Marca como contestada a última recusa dessa resposta nessa pergunta. */
+export function contestRefused(qid: string, text: string) {
+  const list = loadRefused();
+  for (let i = list.length - 1; i >= 0; i--) {
+    if (list[i].qid === qid && list[i].text === text) {
+      list[i].contested = true;
+      break;
+    }
+  }
+  write('recusadas', list);
+}
+export const pendingContests = () => loadRefused().filter((r) => r.contested && !r.sent);
+export function markContestsSent() {
+  write('recusadas', loadRefused().map((r) => (r.contested ? { ...r, sent: true } : r)));
+}
 
 export const totalKm = (picks: Pick[]) => picks.reduce((s, p) => s + p.level * 100, 0);

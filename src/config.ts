@@ -13,3 +13,10 @@ export const MAX_KM = WAVES * 1000;
  */
 export const ANSWER_LOG_URL = '';
 export const STATS_URL = '';
+
+/**
+ * Contestações: quando o jogo recusa uma resposta que o jogador acha certa, ele aperta "contestar".
+ * No fim da rodada, as contestações abrem uma issue já preenchida neste endereço, para alguém
+ * conferir a fonte da pergunta e, se estiver certa, incluir a resposta na lista (ver README).
+ */
+export const CONTEST_URL = 'https://github.com/LH573x/Pororoca/issues/new';
