@@ -30,7 +30,7 @@ export const esportes: ThemeDef = {
 3: Emerson Fittipaldi|Emerson; Felipe Massa|Massa
 4: Gabriel Bortoleto|Bortoleto
 5: Felipe Nasr|Nasr; Bruno Senna; Nelsinho Piquet|Nelson Piquet Jr|Nelson Piquet Júnior
-6: Christian Fittipaldi; Pedro Paulo Diniz|Pedro Diniz; Ricardo Zonta|Zonta; Lucas di Grassi|Di Grassi; Wilson Fittipaldi|Wilsinho Fittipaldi; Pietro Fittipaldi; Cristiano da Matta|Da Matta; Antônio Pizzonia|Pizzonia
+6: Christian Fittipaldi; Pedro Paulo Diniz|Pedro Diniz; Ricardo Zonta|Zonta; Lucas di Grassi|Di Grassi; Wilson Fittipaldi|Wilsinho Fittipaldi; Pietro Fittipaldi; Cristiano da Matta|Da Matta; Antônio Pizzonia|Pizzonia; Rafael Câmara|Rafa Câmara|Câmara
 7: Roberto Moreno|Roberto Pupo Moreno; Maurício Gugelmin|Gugelmin; Raul Boesel|Boesel; José Carlos Pace|Carlos Pace|Moco; Ingo Hoffmann; Chico Serra; Luciano Burti|Burti; Enrique Bernoldi|Bernoldi; Tarso Marques; Ricardo Rosset|Rosset
 8: Alex Dias Ribeiro|Alex Ribeiro; Chico Landi; Luiz Pereira Bueno|Luiz Bueno
 9: Fritz d'Orey; Nano da Silva Ramos|Hernando da Silva Ramos; Gino Bianco
@@ -45,7 +45,7 @@ export const esportes: ThemeDef = {
 2: Michael Schumacher|Schumacher; Lewis Hamilton|Hamilton
 3: Nelson Piquet|Piquet; Max Verstappen|Verstappen; Emerson Fittipaldi|Fittipaldi
 4: Alain Prost|Prost; Fernando Alonso|Alonso; Sebastian Vettel|Vettel; Niki Lauda|Lauda
-5: Kimi Räikkönen|Kimi Raikkonen|Raikkonen; Lando Norris|Norris; Nigel Mansell|Mansell; Mika Häkkinen|Mika Hakkinen|Hakkinen; Jenson Button|Button; Nico Rosberg|Rosberg
+5: Kimi Räikkönen|Kimi Raikkonen|Raikkonen; Lando Norris|Norris; Nigel Mansell|Mansell; Mika Häkkinen|Mika Hakkinen|Hakkinen; Jenson Button|Button; Nico Rosberg|Rosberg; Kimi Antonelli|Andrea Kimi Antonelli|Antonelli
 6: Juan Manuel Fangio|Fangio; Jacques Villeneuve|Villeneuve; Damon Hill; James Hunt|Hunt; Jackie Stewart|Stewart
 7: Jim Clark; Graham Hill; Alberto Ascari|Ascari; Jack Brabham|Brabham; Mario Andretti|Andretti; Keke Rosberg
 8: Nino Farina|Giuseppe Farina|Farina; Mike Hawthorn|Hawthorn; Phil Hill; John Surtees|Surtees; Denny Hulme|Hulme; Jochen Rindt|Rindt; Jody Scheckter|Scheckter; Alan Jones

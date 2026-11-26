@@ -155,7 +155,7 @@ export const mundo: ThemeDef = {
 3: Barcelona; Atlanta; Sydney|Sidney; Moscou; Seul; Cidade do México|México; Munique; Montreal; Roma; Berlim
 4: Amsterdã|Amsterdam; Melbourne; Helsinque; Estocolmo; Antuérpia; Brisbane; Vancouver; Sochi; Turim; Milão; Salt Lake City|Salt Lake
 5: St. Louis|Saint Louis; Lake Placid; Pyeongchang; Nagano; Lillehammer; Calgary; Sarajevo; Innsbruck; Sapporo; Grenoble; Albertville; Oslo; Cortina d'Ampezzo|Cortina
-6: Chamonix; St. Moritz|Saint Moritz; Garmisch-Partenkirchen; Squaw Valley
+6: Chamonix; St. Moritz|Saint Moritz; Garmisch-Partenkirchen; Squaw Valley; Nice|Alpes Franceses
 `,
     },
     {
@@ -170,7 +170,7 @@ export const mundo: ThemeDef = {
 3: Iene|Yen; Yuan|Iuan|Renminbi; Rublo; Franco|Franco suíço|Franco CFA; Rupia
 4: Lira; Coroa; Won; Rand; Bolívar; Guarani; Sol|Novo sol; Boliviano; Dinar; Rial|Riyal|Reale; Shekel|Novo shekel|Siclo
 5: Kwanza; Metical; Escudo|Escudo cabo-verdiano; Dirham; Zloty|Złoty; Florim; Baht; Dong; Colón|Colon; Córdoba; Quetzal; Lempira; Balboa
-6: Forint; Leu; Lev; Hryvnia|Grívnia|Grivna; Naira; Cedi; Xelim; Birr; Dobra; Ringgit; Taka; Gourde; Lek; Denar; Marco conversível; Afegane|Afghani; Manat; Tenge; Lari; Dram; Som|Sum; Somoni; Tugrik|Tögrög
+6: Forint; Leu; Hryvnia|Grívnia|Grivna; Naira; Cedi; Xelim; Birr; Dobra; Ringgit; Taka; Gourde; Lek; Denar; Marco conversível; Afegane|Afghani; Manat; Tenge; Lari; Dram; Som|Sum; Somoni; Tugrik|Tögrög
 7: Kip; Riel; Kyat; Ngultrum; Kina; Vatu; Tala; Paanga|Pa'anga; Rufiyaa; Nakfa; Ariary; Kwacha; Pula; Loti; Lilangeni; Dalasi; Leone; Ouguiya
 `,
     },
@@ -241,7 +241,7 @@ export const esportesNovas: QuestionDef[] = novas([
 2: Novak Djokovic|Djokovic; Serena Williams|Serena; Andre Agassi|Agassi; Pete Sampras|Sampras
 3: Carlos Alcaraz|Alcaraz; Jannik Sinner|Sinner; Andy Murray|Murray; Venus Williams|Venus; Maria Sharapova|Sharapova; Steffi Graf|Graf; Martina Navratilova|Navratilova
 4: Björn Borg|Bjorn Borg|Borg; John McEnroe|McEnroe; Jimmy Connors|Connors; Ivan Lendl|Lendl; Boris Becker|Becker; Iga Swiatek|Swiatek|Świątek; Aryna Sabalenka|Sabalenka; Monica Seles|Seles; Martina Hingis|Hingis; Chris Evert|Evert
-5: Lleyton Hewitt|Hewitt; Andy Roddick|Roddick; Marat Safin|Safin; Daniil Medvedev|Medvedev; Stefan Edberg|Edberg; Mats Wilander|Wilander; Jim Courier|Courier; Kim Clijsters|Clijsters; Justine Henin|Henin; Naomi Osaka|Osaka; Ashleigh Barty|Ash Barty|Barty; Caroline Wozniacki|Wozniacki; Simona Halep|Halep; Lindsay Davenport|Davenport; Arantxa Sánchez Vicario|Sánchez Vicario|Arantxa
+5: Lleyton Hewitt|Hewitt; Andy Roddick|Roddick; Marat Safin|Safin; Daniil Medvedev|Medvedev; Stefan Edberg|Edberg; Mats Wilander|Wilander; Jim Courier|Courier; Kim Clijsters|Clijsters; Justine Henin|Henin; Naomi Osaka|Osaka; Ashleigh Barty|Ash Barty|Barty; Caroline Wozniacki|Wozniacki; Simona Halep|Halep; Lindsay Davenport|Davenport; Arantxa Sánchez Vicario|Sánchez Vicario|Arantxa; Alexander Zverev|Zverev; Elena Rybakina|Rybakina
 6: Juan Carlos Ferrero|Ferrero; Carlos Moyá|Moyá|Moya; Marcelo Ríos|Ríos|Rios; Thomas Muster|Muster; Yevgeny Kafelnikov|Kafelnikov; Patrick Rafter|Rafter; Ilie Năstase|Ilie Nastase|Nastase; John Newcombe|Newcombe; Amélie Mauresmo|Mauresmo; Jennifer Capriati|Capriati; Ana Ivanovic|Ivanovic; Victoria Azarenka|Azarenka; Garbiñe Muguruza|Muguruza; Angelique Kerber|Kerber; Karolína Plíšková|Karolina Pliskova|Pliskova
 7: Tracy Austin; Evonne Goolagong|Goolagong; Jelena Janković|Jelena Jankovic|Jankovic; Dinara Safina|Safina
 `,
@@ -259,9 +259,10 @@ export const futebolNovas: QuestionDef[] = novas([
 1: Pelé|Pele; Ronaldo|Ronaldo Fenômeno|Fenômeno; Ronaldinho|Ronaldinho Gaúcho|R10; Messi|Lionel Messi; Cristiano Ronaldo|CR7
 2: Kaká; Romário; Rivaldo; Marta; Vinícius Júnior|Vini Jr|Vinicius Jr|Vinícius
 3: Zidane|Zinedine Zidane; Luka Modrić|Modric|Modrić; Lewandowski|Robert Lewandowski; Benzema|Karim Benzema; Roberto Baggio|Baggio
-4: Figo|Luís Figo; Cruyff|Johan Cruyff; Beckenbauer|Franz Beckenbauer; Platini|Michel Platini; Van Basten|Marco van Basten; Rodri; Ousmane Dembélé|Dembélé; Eusébio; Cannavaro|Fabio Cannavaro; Shevchenko|Andriy Shevchenko
+4: Figo|Luís Figo; Cruyff|Johan Cruyff; Beckenbauer|Franz Beckenbauer; Platini|Michel Platini; Van Basten|Marco van Basten; Rodri; Ousmane Dembélé|Dembélé; Eusébio; Cannavaro|Fabio Cannavaro; Shevchenko|Andriy Shevchenko; Harry Kane|Kane
 5: Di Stéfano|Alfredo Di Stéfano; Gerd Müller|Gerd Muller; George Best; Bobby Charlton; Matthäus|Lothar Matthäus|Matthaus; Gullit|Ruud Gullit; George Weah|Weah; Michael Owen|Owen; Nedvěd|Pavel Nedved|Nedved; Rummenigge|Karl-Heinz Rummenigge; Paolo Rossi; Aitana Bonmatí|Aitana|Bonmatí; Alexia Putellas|Putellas; Megan Rapinoe|Rapinoe; Mia Hamm
-6: Lev Yashin|Yashin|Iashin; Stanley Matthews|Matthews; Kevin Keegan|Keegan; Denis Law; Gianni Rivera|Rivera; Jean-Pierre Papin|Papin; Matthias Sammer|Sammer; Igor Belanov|Belanov; Oleg Blokhin|Blokhin; Allan Simonsen|Simonsen; Raymond Kopa|Kopa; Luis Suárez Miramontes|Luis Suárez; Omar Sívori|Sívori|Sivori; Josef Masopust|Masopust; Birgit Prinz|Prinz; Homare Sawa|Sawa; Abby Wambach|Wambach; Carli Lloyd|Lloyd; Ada Hegerberg|Hegerberg; Lucy Bronze|Bronze; Lieke Martens|Martens; Nadine Angerer|Angerer; Nadine Kessler|Kessler
+6: Lev Yashin|Yashin|Iashin; Stanley Matthews|Matthews; Kevin Keegan|Keegan; Denis Law; Gianni Rivera|Rivera; Jean-Pierre Papin|Papin; Matthias Sammer|Sammer; Igor Belanov|Belanov; Oleg Blokhin|Blokhin; Allan Simonsen|Simonsen; Raymond Kopa|Kopa; Luis Suárez Miramontes|Luis Suárez; Omar Sívori|Sívori|Sivori; Josef Masopust|Masopust; Birgit Prinz|Prinz; Homare Sawa|Sawa; Abby Wambach|Wambach; Carli Lloyd|Lloyd; Ada Hegerberg|Hegerberg; Lucy Bronze|Bronze; Lieke Martens|Martens; Nadine Angerer|Angerer; Nadine Kessler|Nadine Keßler|Kessler
+8: Flórián Albert|Florian Albert; Hristo Stoichkov|Stoichkov|Stoichkov; Sun Wen
 `,
   },
   {
@@ -365,34 +366,34 @@ export const cinema: ThemeDef = {
   name: 'Cinema',
   questions: novas([
     {
-      // os 37 filmes do Universo Cinematográfico Marvel lançados até 2025 (títulos no Brasil e originais)
+      // os 39 filmes do Universo Cinematográfico Marvel lançados até 2026, com Vingadores: Doomsday (dezembro) (títulos no Brasil e originais)
       id: 'mcu',
       t: 'Um filme do Universo Cinematográfico Marvel',
-      r: 'lançado no cinema até 2025',
+      r: 'lançado no cinema até 2026',
       a: `
 1: Vingadores: Ultimato|Ultimato|Avengers: Endgame|Endgame; Os Vingadores|Vingadores|The Avengers|Avengers
 2: Vingadores: Guerra Infinita|Guerra Infinita|Infinity War; Homem de Ferro|Iron Man; Pantera Negra|Black Panther; Homem-Aranha: Sem Volta para Casa|Sem Volta para Casa|No Way Home; Capitão América: Guerra Civil|Guerra Civil|Civil War
-3: Thor; Capitão América: O Primeiro Vingador|O Primeiro Vingador|The First Avenger; Guardiões da Galáxia|Guardians of the Galaxy; Vingadores: Era de Ultron|Era de Ultron|Age of Ultron; Homem-Formiga|Ant-Man; Doutor Estranho|Doctor Strange; Thor: Ragnarok|Ragnarok; Capitã Marvel|Captain Marvel; Homem-Aranha: De Volta ao Lar|De Volta ao Lar|Homecoming; Deadpool & Wolverine|Deadpool e Wolverine; Viúva Negra|Black Widow
-4: Homem de Ferro 2|Iron Man 2; Homem de Ferro 3|Iron Man 3; Capitão América: O Soldado Invernal|O Soldado Invernal|Soldado Invernal|The Winter Soldier; Guardiões da Galáxia Vol. 2|Guardiões da Galáxia 2; Homem-Aranha: Longe de Casa|Longe de Casa|Far From Home; Thor: O Mundo Sombrio|O Mundo Sombrio|The Dark World; Shang-Chi e a Lenda dos Dez Anéis|Shang-Chi; Eternos|Eternals; Doutor Estranho no Multiverso da Loucura|Multiverso da Loucura; Thor: Amor e Trovão|Amor e Trovão|Love and Thunder; Pantera Negra: Wakanda para Sempre|Wakanda para Sempre|Wakanda Forever; Guardiões da Galáxia Vol. 3|Guardiões da Galáxia 3
+3: Thor; Capitão América: O Primeiro Vingador|O Primeiro Vingador|The First Avenger; Guardiões da Galáxia|Guardians of the Galaxy; Vingadores: Era de Ultron|Era de Ultron|Age of Ultron; Homem-Formiga|Ant-Man; Doutor Estranho|Doctor Strange; Thor: Ragnarok|Ragnarok; Capitã Marvel|Captain Marvel; Homem-Aranha: De Volta ao Lar|De Volta ao Lar|Homecoming; Deadpool & Wolverine|Deadpool e Wolverine; Viúva Negra|Black Widow; Homem-Aranha: Um Novo Dia|Um Novo Dia|Spider-Man: Brand New Day|Brand New Day
+4: Homem de Ferro 2|Iron Man 2; Homem de Ferro 3|Iron Man 3; Capitão América: O Soldado Invernal|O Soldado Invernal|Soldado Invernal|The Winter Soldier; Guardiões da Galáxia Vol. 2|Guardiões da Galáxia 2; Homem-Aranha: Longe de Casa|Longe de Casa|Far From Home; Thor: O Mundo Sombrio|O Mundo Sombrio|The Dark World; Shang-Chi e a Lenda dos Dez Anéis|Shang-Chi; Eternos|Eternals; Doutor Estranho no Multiverso da Loucura|Multiverso da Loucura; Thor: Amor e Trovão|Amor e Trovão|Love and Thunder; Pantera Negra: Wakanda para Sempre|Wakanda para Sempre|Wakanda Forever; Guardiões da Galáxia Vol. 3|Guardiões da Galáxia 3; Vingadores: Doomsday|Avengers: Doomsday|Doomsday
 5: O Incrível Hulk|Incrível Hulk|The Incredible Hulk; Homem-Formiga e a Vespa|Ant-Man and the Wasp; Homem-Formiga e a Vespa: Quantumania|Quantumania; As Marvels|The Marvels; Capitão América: Admirável Mundo Novo|Admirável Mundo Novo|Brave New World; Thunderbolts|Thunderbolts*; Quarteto Fantástico: Primeiros Passos|Primeiros Passos|The Fantastic Four: First Steps
 `,
     },
     {
-      // vencedores do Oscar de melhor filme, da 1ª (1929) à 97ª cerimônia (2025)
+      // vencedores do Oscar de melhor filme, da 1ª (1929) à 98ª cerimônia (2026)
       id: 'oscar',
       t: 'Um filme que ganhou o Oscar de melhor filme',
-      r: 'até a cerimônia de 2025',
+      r: 'até a cerimônia de 2026',
       a: `
 1: Titanic; O Poderoso Chefão|The Godfather|Poderoso Chefão
 2: Forrest Gump|Forrest Gump: O Contador de Histórias; Gladiador|Gladiator; O Senhor dos Anéis: O Retorno do Rei|O Retorno do Rei|The Return of the King; ...E o Vento Levou|E o Vento Levou|Gone with the Wind; Parasita|Parasite; A Lista de Schindler|Schindler's List; Rocky|Rocky: Um Lutador; Oppenheimer
-3: O Poderoso Chefão II|O Poderoso Chefão 2|The Godfather Part II; O Silêncio dos Inocentes|The Silence of the Lambs; Casablanca; Ben-Hur; Coração Valente|Braveheart; Beleza Americana|American Beauty; Uma Mente Brilhante|A Beautiful Mind; Os Infiltrados|The Departed; A Noviça Rebelde|The Sound of Music; Tudo em Todo o Lugar ao Mesmo Tempo|Everything Everywhere All at Once; Quem Quer Ser um Milionário?|Quem Quer Ser um Milionário|Slumdog Millionaire; Chicago
+3: O Poderoso Chefão II|O Poderoso Chefão 2|The Godfather Part II; O Silêncio dos Inocentes|The Silence of the Lambs; Casablanca; Ben-Hur; Coração Valente|Braveheart; Beleza Americana|American Beauty; Uma Mente Brilhante|A Beautiful Mind; Os Infiltrados|The Departed; A Noviça Rebelde|The Sound of Music; Tudo em Todo o Lugar ao Mesmo Tempo|Everything Everywhere All at Once; Quem Quer Ser um Milionário?|Quem Quer Ser um Milionário|Slumdog Millionaire; Chicago; Uma Batalha Após a Outra|One Battle After Another
 4: Um Estranho no Ninho|One Flew Over the Cuckoo's Nest; Rain Man|Rain Man: O Homem da Chuva; Dança com Lobos|Dances with Wolves; Os Imperdoáveis|Unforgiven; Shakespeare Apaixonado|Shakespeare in Love; Menina de Ouro|Million Dollar Baby; O Discurso do Rei|The King's Speech; O Artista|The Artist; Argo; 12 Anos de Escravidão|Doze Anos de Escravidão|12 Years a Slave; Birdman|Birdman ou (A Inesperada Virtude da Ignorância); Spotlight|Spotlight: Segredos Revelados; Moonlight|Moonlight: Sob a Luz do Luar; A Forma da Água|The Shape of Water; Green Book|Green Book: O Guia; Nomadland; No Ritmo do Coração|CODA; Anora; Amadeus; Platoon; Gandhi; Onde os Fracos Não Têm Vez|No Country for Old Men; Guerra ao Terror|The Hurt Locker; Crash|Crash: No Limite; O Paciente Inglês|The English Patient
 5: Lawrence da Arábia|Lawrence of Arabia; A Ponte do Rio Kwai|The Bridge on the River Kwai; Amor, Sublime Amor|West Side Story; Minha Bela Dama|My Fair Lady; O Franco Atirador|The Deer Hunter; Kramer vs. Kramer|Kramer vs Kramer|Kramer x Kramer; Noivo Neurótico, Noiva Nervosa|Annie Hall; Conduzindo Miss Daisy|Driving Miss Daisy; O Último Imperador|The Last Emperor; Entre Dois Amores|Out of Africa; Laços de Ternura|Terms of Endearment; Carruagens de Fogo|Chariots of Fire; Gente como a Gente|Ordinary People; Golpe de Mestre|The Sting; Operação França|The French Connection; Perdidos na Noite|Midnight Cowboy; Oliver!|Oliver; No Calor da Noite|In the Heat of the Night; A Volta ao Mundo em 80 Dias|Around the World in 80 Days; Patton|Patton: Rebelde ou Herói?; Sindicato de Ladrões|On the Waterfront; A Um Passo da Eternidade|From Here to Eternity; Se Meu Apartamento Falasse|The Apartment; Gigi; A Malvada|All About Eve
 6: O Homem que Não Vendia Sua Alma|A Man for All Seasons; As Aventuras de Tom Jones|Tom Jones; Marty; O Maior Espetáculo da Terra|The Greatest Show on Earth; Sinfonia de Paris|An American in Paris; A Grande Ilusão|All the King's Men; Hamlet; A Luz É para Todos|Gentleman's Agreement; Os Melhores Anos de Nossas Vidas|The Best Years of Our Lives; Farrapo Humano|The Lost Weekend; O Bom Pastor|Going My Way; Rosa de Esperança|Mrs. Miniver; Como Era Verde o Meu Vale|How Green Was My Valley; Rebecca|Rebecca, a Mulher Inesquecível; Do Mundo Nada Se Leva|You Can't Take It with You; A Vida de Emile Zola|The Life of Emile Zola; Ziegfeld: O Criador de Estrelas|The Great Ziegfeld|Ziegfeld; O Grande Motim|Mutiny on the Bounty; Aconteceu Naquela Noite|It Happened One Night; Cavalgada|Cavalcade; Grande Hotel|Grand Hotel; Cimarron; Sem Novidade no Front|Nada de Novo no Front|All Quiet on the Western Front; Melodia da Broadway|The Broadway Melody; Asas|Wings
 `,
     },
     {
-      // longas dirigidos por Steven Spielberg, de Encurralado (1971) a Os Fabelmans (2022)
+      // longas dirigidos por Steven Spielberg, de Encurralado (1971) a Disclosure Day (2026)
       id: 'spielberg',
       t: 'Um filme dirigido por Steven Spielberg',
       a: `
@@ -400,7 +401,7 @@ export const cinema: ThemeDef = {
 2: Os Caçadores da Arca Perdida|Indiana Jones e os Caçadores da Arca Perdida|Caçadores da Arca Perdida|Raiders of the Lost Ark; A Lista de Schindler|Schindler's List; O Resgate do Soldado Ryan|Resgate do Soldado Ryan|Saving Private Ryan
 3: Indiana Jones e o Templo da Perdição|O Templo da Perdição|Templo da Perdição; Indiana Jones e a Última Cruzada|A Última Cruzada|Última Cruzada; Prenda-me Se For Capaz|Catch Me If You Can; Contatos Imediatos do Terceiro Grau|Contatos Imediatos; Hook – A Volta do Capitão Gancho|Hook|A Volta do Capitão Gancho; O Terminal|The Terminal; Guerra dos Mundos|War of the Worlds; Minority Report|Minority Report: A Nova Lei; O Mundo Perdido: Jurassic Park|O Mundo Perdido
 4: A.I. – Inteligência Artificial|A.I.|Inteligência Artificial; Indiana Jones e o Reino da Caveira de Cristal|O Reino da Caveira de Cristal|Reino da Caveira de Cristal; Lincoln; Jogador Nº 1|Jogador Número 1|Ready Player One; A Cor Púrpura|The Color Purple; Cavalo de Guerra|War Horse; As Aventuras de Tintim|Tintim; Ponte dos Espiões|Bridge of Spies; Munique|Munich; Os Fabelmans|The Fabelmans; Amor, Sublime Amor|West Side Story; O Bom Gigante Amigo|BFG
-5: Encurralado|Duel; Louca Escapada|The Sugarland Express; 1941 – Uma Guerra Muito Louca|1941; Império do Sol|Empire of the Sun; Além da Eternidade|Always; Amistad; The Post – A Guerra Secreta|The Post
+5: Encurralado|Duel; Louca Escapada|The Sugarland Express; 1941 – Uma Guerra Muito Louca|1941; Império do Sol|Empire of the Sun; Além da Eternidade|Always; Amistad; The Post – A Guerra Secreta|The Post; Disclosure Day
 `,
     },
   ]),
@@ -481,14 +482,14 @@ export const gamesNovas: QuestionDef[] = novas([
 
 export const marcasNovas: QuestionDef[] = novas([
   {
-    // todos os modelos de iPhone lançados pela Apple, do original (2007) ao iPhone 17 e iPhone Air (2025)
+    // todos os modelos de iPhone lançados pela Apple, do original (2007) ao iPhone 18 Pro e iPhone Duo (2026)
     id: 'iphone',
     t: 'Um modelo de iPhone',
     a: `
 1: iPhone 15|15; iPhone 13|13; iPhone 11|11; iPhone 16|16; iPhone 14|14
 2: iPhone 12|12; iPhone X|X|iPhone 10; iPhone 15 Pro Max|15 Pro Max; iPhone 16 Pro Max|16 Pro Max; iPhone 7|7; iPhone 8|8; iPhone 17|17; iPhone 4|4; iPhone 6|6; iPhone 5|5
-3: iPhone 13 Pro|13 Pro; iPhone 14 Pro|14 Pro; iPhone 15 Pro|15 Pro; iPhone 16 Pro|16 Pro; iPhone 17 Pro|17 Pro; iPhone 17 Pro Max|17 Pro Max; iPhone 14 Pro Max|14 Pro Max; iPhone 13 Pro Max|13 Pro Max; iPhone XR|XR|10R; iPhone 11 Pro|11 Pro; iPhone 11 Pro Max|11 Pro Max; iPhone SE|SE; iPhone 12 Pro Max|12 Pro Max; iPhone 12 Pro|12 Pro; iPhone 7 Plus|7 Plus; iPhone 8 Plus|8 Plus; iPhone 6 Plus|6 Plus; iPhone 4S|4S; iPhone 5S|5S; iPhone 6S|6S
-4: iPhone XS|XS|10S; iPhone XS Max|XS Max; iPhone 12 mini|12 mini; iPhone 13 mini|13 mini; iPhone 14 Plus|14 Plus; iPhone 15 Plus|15 Plus; iPhone 16 Plus|16 Plus; iPhone Air|Air; iPhone 3G|3G; iPhone 3GS|3GS; iPhone 5C|5C; iPhone 6S Plus|6S Plus; iPhone 16e|16e
+3: iPhone 13 Pro|13 Pro; iPhone 14 Pro|14 Pro; iPhone 15 Pro|15 Pro; iPhone 16 Pro|16 Pro; iPhone 17 Pro|17 Pro; iPhone 17 Pro Max|17 Pro Max; iPhone 14 Pro Max|14 Pro Max; iPhone 13 Pro Max|13 Pro Max; iPhone XR|XR|10R; iPhone 11 Pro|11 Pro; iPhone 11 Pro Max|11 Pro Max; iPhone SE|SE; iPhone 12 Pro Max|12 Pro Max; iPhone 12 Pro|12 Pro; iPhone 7 Plus|7 Plus; iPhone 8 Plus|8 Plus; iPhone 6 Plus|6 Plus; iPhone 4S|4S; iPhone 5S|5S; iPhone 6S|6S; iPhone 18 Pro|18 Pro; iPhone 18 Pro Max|18 Pro Max
+4: iPhone XS|XS|10S; iPhone XS Max|XS Max; iPhone 12 mini|12 mini; iPhone 13 mini|13 mini; iPhone 14 Plus|14 Plus; iPhone 15 Plus|15 Plus; iPhone 16 Plus|16 Plus; iPhone Air|Air; iPhone 3G|3G; iPhone 3GS|3GS; iPhone 5C|5C; iPhone 6S Plus|6S Plus; iPhone 16e|16e; iPhone 17e|17e; iPhone Duo|Duo
 5: iPhone original|iPhone 2G|Primeiro iPhone|iPhone 1
 `,
   },
@@ -517,7 +518,7 @@ export const universidades: ThemeDef = {
   name: 'Universidades federais',
   questions: novas([
     {
-      // as 69 universidades federais do Ministério da Educação (2025), com nome e sigla
+      // as 74 universidades federais do Ministério da Educação (novembro de 2026), com nome e sigla
       id: 'federal',
       t: 'Uma universidade federal brasileira',
       r: 'nome ou sigla',
@@ -526,8 +527,8 @@ export const universidades: ThemeDef = {
 2: Universidade Federal de Minas Gerais|UFMG; Universidade de Brasília|UnB; Universidade Federal do Rio Grande do Sul|UFRGS; Universidade Federal de Santa Catarina|UFSC; Universidade Federal Fluminense|UFF
 3: Universidade Federal do Paraná|UFPR; Universidade Federal de Pernambuco|UFPE; Universidade Federal da Bahia|UFBA; Universidade Federal do Ceará|UFC; Universidade Federal de São Paulo|Unifesp; Universidade Federal de São Carlos|UFSCar; Universidade Federal do Pará|UFPA; Universidade Federal de Goiás|UFG; Universidade Tecnológica Federal do Paraná|UTFPR
 4: Universidade Federal do Amazonas|UFAM; Universidade Federal da Paraíba|UFPB; Universidade Federal do Rio Grande do Norte|UFRN; Universidade Federal do Espírito Santo|UFES; Universidade Federal de Juiz de Fora|UFJF; Universidade Federal de Viçosa|UFV; Universidade Federal de Uberlândia|UFU; Universidade Federal de Ouro Preto|UFOP; Universidade Federal Rural do Rio de Janeiro|UFRRJ|Rural; Universidade Federal do Estado do Rio de Janeiro|Unirio; Universidade Federal de Pelotas|UFPel; Universidade Federal de Santa Maria|UFSM; Universidade Federal do ABC|UFABC; Universidade Federal de Alagoas|UFAL; Universidade Federal de Sergipe|UFS; Universidade Federal do Piauí|UFPI; Universidade Federal do Maranhão|UFMA; Universidade Federal de Mato Grosso|UFMT; Universidade Federal de Mato Grosso do Sul|UFMS; Universidade Federal de Lavras|UFLA
-5: Universidade Federal de Campina Grande|UFCG; Universidade Federal Rural de Pernambuco|UFRPE; Universidade Federal do Rio Grande|FURG; Universidade Federal de São João del-Rei|UFSJ|Universidade Federal de São João del Rei; Universidade Federal de Itajubá|Unifei; Universidade Federal de Alfenas|Unifal; Universidade Federal do Triângulo Mineiro|UFTM; Universidade Federal dos Vales do Jequitinhonha e Mucuri|UFVJM; Universidade Federal do Recôncavo da Bahia|UFRB; Universidade Federal do Vale do São Francisco|Univasf; Universidade Federal Rural do Semi-Árido|Ufersa; Universidade Federal da Integração Latino-Americana|Unila; Universidade Federal da Fronteira Sul|Fronteira Sul; Universidade Federal do Pampa|Unipampa; Universidade Federal de Ciências da Saúde de Porto Alegre|UFCSPA; Universidade Federal da Grande Dourados|UFGD; Universidade Federal de Rondônia|Unir; Universidade Federal de Roraima|UFRR; Universidade Federal do Amapá|Unifap; Universidade Federal do Acre|UFAC; Universidade Federal do Tocantins|UFT; Universidade Federal Rural da Amazônia|UFRA; Universidade Federal do Oeste do Pará|Ufopa
-6: Universidade Federal do Sul e Sudeste do Pará|Unifesspa; Universidade Federal do Norte do Tocantins|UFNT; Universidade Federal do Oeste da Bahia|UFOB; Universidade Federal do Sul da Bahia|UFSB; Universidade Federal do Cariri|UFCA; Universidade da Integração Internacional da Lusofonia Afro-Brasileira|Unilab; Universidade Federal do Agreste de Pernambuco|UFAPE; Universidade Federal do Delta do Parnaíba|UFDPar; Universidade Federal de Jataí|UFJ; Universidade Federal de Catalão|UFCAT; Universidade Federal de Rondonópolis|UFR
+5: Universidade Federal de Campina Grande|UFCG; Universidade Federal Rural de Pernambuco|UFRPE; Universidade Federal do Rio Grande|FURG; Universidade Federal de São João del-Rei|UFSJ|Universidade Federal de São João del Rei; Universidade Federal de Itajubá|Unifei; Universidade Federal de Alfenas|Unifal|UNIFAL-MG; Universidade Federal do Triângulo Mineiro|UFTM; Universidade Federal dos Vales do Jequitinhonha e Mucuri|UFVJM; Universidade Federal do Recôncavo da Bahia|UFRB; Universidade Federal do Vale do São Francisco|Univasf; Universidade Federal Rural do Semi-Árido|Ufersa; Universidade Federal da Integração Latino-Americana|Unila; Universidade Federal da Fronteira Sul|Fronteira Sul; Universidade Federal do Pampa|Unipampa; Universidade Federal de Ciências da Saúde de Porto Alegre|UFCSPA; Universidade Federal da Grande Dourados|UFGD; Universidade Federal de Rondônia|Unir; Universidade Federal de Roraima|UFRR; Universidade Federal do Amapá|Unifap; Universidade Federal do Acre|UFAC; Universidade Federal do Tocantins|UFT; Universidade Federal Rural da Amazônia|UFRA; Universidade Federal do Oeste do Pará|Ufopa
+6: Universidade Federal do Sul e Sudeste do Pará|Unifesspa; Universidade Federal do Norte do Tocantins|UFNT; Universidade Federal do Oeste da Bahia|UFOB; Universidade Federal do Sul da Bahia|UFSB; Universidade Federal do Cariri|UFCA; Universidade da Integração Internacional da Lusofonia Afro-Brasileira|Unilab; Universidade Federal do Agreste de Pernambuco|UFAPE; Universidade Federal do Delta do Parnaíba|UFDPar; Universidade Federal de Jataí|UFJ; Universidade Federal de Catalão|UFCAT; Universidade Federal de Rondonópolis|UFR; Universidade Federal da Fronteira Norte|UFFN; Universidade Federal Indígena|Unind; Universidade Federal do Esporte|UFEsporte; Universidade Federal de Ciência e Inovação de Minas Gerais|UFCIMG|CEFET-MG; Universidade Federal de Ciência e Inovação do Rio de Janeiro|UFCIRJ|CEFET-RJ
 `,
     },
   ]),
