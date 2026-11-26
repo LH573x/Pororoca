@@ -28,6 +28,8 @@ for (let i = 0; i < 7; i++) {
     const hint = await page.textContent('#hint');
     if (!hint?.includes('não vale')) throw new Error('texto ao acaso não foi recusado: ' + hint);
     await page.screenshot({ path: `${out}/2-recusada.png` });
+    await page.click('#contest');
+    if (!(await page.textContent('#hint'))?.includes('Contestação guardada')) throw new Error('contestar não guardou');
   }
   // na 2ª pergunta testa o "você quis dizer"
   const long = q.answers.filter((a) => a.name.length >= 6).sort((a, b) => b.tier - a.tier);
@@ -53,6 +55,8 @@ for (let i = 0; i < 7; i++) {
 }
 await page.waitForTimeout(2200);
 await page.screenshot({ path: `${out}/5-resultado.png` });
+if ((await page.textContent('#contestBtn'))?.trim() !== 'Enviar 1 contestação' || !(await page.isVisible('#contestBtn')))
+  throw new Error('botão de enviar contestações não apareceu');
 await page.click('#ansBtn');
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${out}/6-respostas.png` });

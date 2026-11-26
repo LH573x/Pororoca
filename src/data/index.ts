@@ -11,6 +11,7 @@ import { filmes, games } from './temas/telas';
 import {
   bichosNovas, cinema, comidasNovas, esportesNovas, futebolNovas, gamesNovas, marcasNovas, mundial, mundo, nordica, universidades,
 } from './temas/mais';
+import { cinemaMinimos, internet } from './temas/minimos';
 
 // perguntas novas que entram em temas que já existiam
 esportes.questions.push(...esportesNovas);
@@ -20,12 +21,13 @@ comidas.questions.push(...comidasNovas);
 games.questions.push(...gamesNovas);
 marcas.questions.push(...marcasNovas);
 mitologia.questions.push(nordica);
+cinema.questions.push(...cinemaMinimos);
 
 /** Os temas do jogo. Só entram perguntas com universo fechado de respostas, que dá para conferir. */
 export const THEME_DEFS = [
   comidas, cidades, litoral, bairros, paises, futebol, esportes, novelas, folclore, desenhos, filmes, games,
   musica, natureza, marcas, carros, historia, linguas, mitologia, ciencia, corpo,
-  mundo, mundial, cinema, universidades,
+  mundo, mundial, cinema, universidades, internet,
 ];
 
 export const BANK = buildBank(THEME_DEFS);

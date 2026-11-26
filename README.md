@@ -85,6 +85,22 @@ ter todas as respostas possíveis. Fontes usadas:
 - países sem litoral e de língua inglesa: pacote world-countries; OTAN, estados dos EUA e do México, sedes olímpicas,
   presidentes dos EUA, reis de Portugal e da Inglaterra, imperadores romanos, Oscar, MCU, Premier League, Libertadores,
   Champions, Bola de Ouro, nº 1 da ATP/WTA, universidades federais (MEC): listas oficiais de cada entidade.
+- filmes brasileiros: busca avançada do IMDb (`src/data/gerado/filmes.ts`), todos os longas com país Brasil,
+  língua portuguesa e pelo menos 100 avaliações; nível pelo número de avaliações.
+- canais do YouTube: os 100 maiores do Brasil na Social Blade (todos com 14 milhões de inscritos ou mais).
+
+### Mínimo adotado
+
+Quando a lista não é fechada (filmes, canais, raças...), a pergunta usa um mínimo objetivo: o menor número em
+que a fonte lista **todos** acima dele, e entram todos. O mínimo de cada pergunta fica em `src/data/criterios.ts`
+(`npm run check-data` falha se faltar). Listas que ainda não têm número de corte começam com `SEM MÉTRICA`.
+
+### Contestações
+
+Quando o jogo recusa uma resposta, aparece o botão **contestar**. No fim da rodada, **Enviar contestações** abre
+uma issue no GitHub já preenchida com a pergunta e o que foi digitado. Para aprovar: conferir a resposta na fonte
+da pergunta (ou numa fonte do mesmo tipo), incluir na lista com o nível certo, rodar `npm run check-data` e fechar
+a issue. Se a resposta não passa do mínimo da pergunta, responder com o mínimo e fechar.
 
 Pergunta nova entra com `desde: <dia>` para não mudar as rodadas que já foram jogadas.
 

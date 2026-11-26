@@ -130,3 +130,5 @@ canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 #app.kb .hint{min-height:0;margin-bottom:6px}
 #app.kb .ans input,#app.kb .ans .go{height:46px}
 #app.kb .ans .go{width:46px}
+
+[hidden]{display:none!important}

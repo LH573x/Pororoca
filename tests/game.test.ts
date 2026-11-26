@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { animalFor, decodeLevels, encodeLevels, waveBars } from '../src/animals';
 import { BANK } from '../src/data';
+import { CRITERIOS } from '../src/data/criterios';
 import { stretch } from '../src/data/parse';
 import { dayNumber, isoOfDay, todayISO } from '../src/day';
 import { levelFor, levelFromPct } from '../src/rarity';
@@ -8,8 +9,8 @@ import { pickRound } from '../src/round';
 import { streaks } from '../src/streaks';
 
 describe('banco de perguntas', () => {
-  it('tem os 25 temas e pelo menos uma pergunta em cada', () => {
-    expect(BANK.themes).toHaveLength(25);
+  it('tem os 26 temas e pelo menos uma pergunta em cada', () => {
+    expect(BANK.themes).toHaveLength(26);
     for (const t of BANK.themes) expect(BANK.questions.some((q) => q.theme === t.id), t.id).toBe(true);
   });
   it('toda pergunta tem respostas óbvias (nível 1 ou 2) e a mais rara vale 1000 km', () => {
@@ -18,6 +19,16 @@ describe('banco de perguntas', () => {
       expect(Math.min(...tiers), q.id).toBeLessThanOrEqual(2);
       expect(Math.max(...tiers), q.id).toBe(10);
     }
+  });
+  it('toda pergunta diz o mínimo adotado para entrar na lista', () => {
+    for (const q of BANK.questions) expect(CRITERIOS[q.id], q.id).toBeTruthy();
+  });
+  it('os filmes brasileiros do IMDb incluem os raros, como Reflexões de um Liquidificador', () => {
+    const q = BANK.questions.find((x) => x.id === 'cinema/filmebr')!;
+    expect(q.answers.length).toBeGreaterThan(1500);
+    const f = q.answers.find((a) => a.name === 'Reflexões de um Liquidificador')!;
+    expect(f.aliases).toContain('Confissões de um Liquidificador');
+    expect(f.tier).toBeGreaterThanOrEqual(7);
   });
   it('a pergunta das cidades do litoral aceita Angra dos Reis', () => {
     const q = BANK.questions.find((x) => x.id === 'turismo/litoral')!;
