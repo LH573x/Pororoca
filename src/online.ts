@@ -20,6 +20,8 @@ async function call<T>(method: string, path: string, body?: unknown, q?: Record<
 export const get = <T>(path: string, q?: Record<string, string>) => call<T>('GET', path, undefined, q);
 export const put = <T>(path: string, v: unknown) => call<T>('PUT', path, v);
 export const post = <T>(path: string, v: unknown) => call<T>('POST', path, v);
+/** Grava vários caminhos de uma vez (ou todos, ou nenhum). */
+export const patch = <T>(path: string, v: Record<string, unknown>) => call<T>('PATCH', path, v);
 
 /** Grava a hora do servidor e devolve quanto o relógio daqui está atrasado em relação a ele. */
 export async function putWithClock(path: string, v: Record<string, unknown>, timeKey: string): Promise<number> {

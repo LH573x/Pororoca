@@ -12,7 +12,7 @@ import { drawMap, labelMap } from './map';
 import { matchAnswer } from './match';
 import { LiveDuel, other, pickOf, picksOf, rivalDone, startOf } from './live';
 import { online } from './online';
-import { cleanName, loadRanking, MODE_LABEL, submitScore } from './ranking';
+import { cleanName, loadHistory, loadRanking, MODE_LABEL, submitScore } from './ranking';
 import { levelFor, noStats, type QuestionStats, type StatsSource } from './rarity';
 import { randomSeed } from './random';
 import { pickRound } from './round';
@@ -97,6 +97,7 @@ function refreshHome() {
   if (saved?.done) btn.textContent = `Hoje: ${fmt(totalKm(saved.picks))} km`;
   else if (saved?.picks.length || saved?.pendingAt) btn.textContent = 'Continuar';
   else btn.textContent = 'Jogar';
+  refreshLeader();
 }
 
 // ---------- começar rodadas ----------
@@ -728,28 +729,63 @@ $('rankMsg').addEventListener('click', (e) => {
   if ((e.target as HTMLElement).closest('[data-rank]')) openRanking();
 });
 
-async function openRanking() {
+/** Aba aberta na folha do ranking. */
+let rankTab: 'hoje' | 'sempre' = 'hoje';
+
+function openRanking() {
+  openSheet('ranking');
+  showRankTab(rankTab);
+}
+
+async function showRankTab(tab: 'hoje' | 'sempre') {
+  rankTab = tab;
+  document.querySelectorAll<HTMLElement>('#ranking [data-tab]').forEach((b) => {
+    b.classList.toggle('on', b.dataset.tab === tab);
+    b.setAttribute('aria-selected', String(b.dataset.tab === tab));
+  });
   const n = today();
-  $('rankDay').textContent = `${formatDay(isoOfDay(n))} · todas as partidas do dia`;
+  $('rankDay').textContent = tab === 'hoje' ? `${formatDay(isoOfDay(n))} · todas as partidas do dia` : 'As melhores partidas desde o começo do jogo';
   const list = $('rankList');
   list.innerHTML = '<li class="empty">Carregando…</li>';
-  openSheet('ranking');
   try {
-    const rows = await loadRanking(n);
+    const rows = tab === 'hoje' ? await loadRanking(n) : await loadHistory();
+    if (rankTab !== tab) return; // trocou de aba enquanto carregava
     let marked = false;
     list.innerHTML = rows.length
       ? rows
           .map((e, i) => {
             const me = !marked && myEntry && e.nome === myEntry.nome && e.km === myEntry.km;
             if (me) marked = true;
-            return `<li class="${me ? 'me' : ''}"><span class="p">${i + 1}º</span><span class="nm">${esc(e.nome)}</span><span class="md">${MODE_LABEL[e.modo] ?? ''}</span><span class="k">${fmt(e.km)} km</span></li>`;
+            // no de todos os tempos, o dia em que a partida foi jogada no lugar do modo
+            const tag = 'dia' in e ? formatDay(isoOfDay(e.dia as number)).slice(0, 5) : (MODE_LABEL[e.modo] ?? '');
+            return `<li class="${me ? 'me' : ''}"><span class="p">${i + 1}º</span><span class="nm">${esc(e.nome)}</span><span class="md">${tag}</span><span class="k">${fmt(e.km)} km</span></li>`;
           })
           .join('')
-      : '<li class="empty">Ninguém entrou no ranking hoje ainda. Jogue e seja o primeiro!</li>';
+      : `<li class="empty">${tab === 'hoje' ? 'Ninguém entrou no ranking hoje ainda. Jogue e seja o primeiro!' : 'Ninguém entrou no ranking ainda. Jogue e seja o primeiro!'}</li>`;
   } catch {
-    list.innerHTML = '<li class="empty">Sem conexão. Tente de novo daqui a pouco.</li>';
+    if (rankTab === tab) list.innerHTML = '<li class="empty">Sem conexão. Tente de novo daqui a pouco.</li>';
   }
 }
+document.querySelectorAll<HTMLElement>('#ranking [data-tab]').forEach((b) => b.addEventListener('click', () => showRankTab(b.dataset.tab as 'hoje' | 'sempre')));
+
+/** Botão do troféu: mostra o nome do primeiro colocado do dia. */
+let leaderLoading = false;
+async function refreshLeader() {
+  if (!online() || leaderLoading) return;
+  leaderLoading = true;
+  try {
+    const top = (await loadRanking(today()))[0];
+    $('rankTop').textContent = top ? top.nome : '';
+    $('rankBtn').setAttribute('aria-label', top ? `Ranking: ${top.nome} está em 1º hoje` : 'Ranking');
+  } catch {
+    /* sem rede: fica o que estava */
+  } finally {
+    leaderLoading = false;
+  }
+}
+setInterval(() => {
+  if ($('home').classList.contains('on') && !document.hidden) refreshLeader();
+}, 30000);
 
 // ---------- folhas (regras, respostas, arquivo, estatísticas, duelo) ----------
 let lastFocus: HTMLElement | null = null;

@@ -34,7 +34,8 @@ Com `ONLINE_URL` vazio, o duelo volta a ser por link (um joga, depois o outro) e
 - Duelo (`src/live.ts`): quem cria a sala sorteia as 7 perguntas; quando o amigo entra pelo link, os dois veem uma contagem
   e começam juntos. Cada pergunta começa na mesma hora (do servidor) para os dois; a próxima só vem quando os dois
   responderam, ou 4 s depois do fim do tempo se um sumiu.
-- Ranking (`src/ranking.ts`): `ranking/<número do dia>`, com nome, km, modo e hora. Cada partida entra uma vez.
+- Ranking (`src/ranking.ts`): `ranking/<número do dia>`, com nome, km, modo e hora, e uma cópia em `historia/` (com o dia)
+  para o ranking de todos os tempos. Cada partida entra uma vez. O botão do troféu mostra o 1º colocado do dia.
 
 Para testar sem conta: `npm run servidor-teste` (imitação do Firebase na porta 9000) e
 `VITE_ONLINE_URL=http://localhost:9000 npm run dev`. `scripts/e2e-duelo.ts` joga um duelo com duas janelas.
