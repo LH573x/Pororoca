@@ -20,7 +20,7 @@ export const STATS_URL = '';
  * Vazio: o duelo volta a ser por link (um joga, depois o outro) e o ranking some.
  * Para testar no computador: VITE_ONLINE_URL=http://localhost:9000 npm run dev (com npm run servidor-teste).
  */
-export const ONLINE_URL = '';
+export const ONLINE_URL = 'https://pororoca-25f46-default-rtdb.firebaseio.com';
 
 /**
  * Contestações: quando o jogo recusa uma resposta que o jogador acha certa, ele aperta "contestar".
