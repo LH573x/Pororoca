@@ -97,7 +97,6 @@ function refreshHome() {
   if (saved?.done) btn.textContent = `Hoje: ${fmt(totalKm(saved.picks))} km`;
   else if (saved?.picks.length || saved?.pendingAt) btn.textContent = 'Continuar';
   else btn.textContent = 'Jogar';
-  refreshBoard();
 }
 
 // ---------- começar rodadas ----------
@@ -729,20 +728,6 @@ $('rankMsg').addEventListener('click', (e) => {
   if ((e.target as HTMLElement).closest('[data-rank]')) openRanking();
 });
 
-/** Linhas do ranking (folha e caixa da tela inicial). */
-function rankRows(rows: Awaited<ReturnType<typeof loadRanking>>) {
-  if (!rows.length) return '<li class="empty">Ninguém no ranking hoje ainda. Jogue e seja o primeiro!</li>';
-  let marked = false;
-  return rows
-    .map((e, i) => {
-      const me = !marked && myEntry && e.nome === myEntry.nome && e.km === myEntry.km;
-      if (me) marked = true;
-      return `<li class="${me ? 'me' : ''}"><span class="p">${i + 1}º</span><span class="nm">${esc(e.nome)}</span><span class="md">${MODE_LABEL[e.modo] ?? ''}</span><span class="k">${fmt(e.km)} km</span></li>`;
-    })
-    .join('');
-}
-const NO_NET = '<li class="empty">Sem conexão. Tente de novo daqui a pouco.</li>';
-
 async function openRanking() {
   const n = today();
   $('rankDay').textContent = `${formatDay(isoOfDay(n))} · todas as partidas do dia`;
@@ -750,32 +735,21 @@ async function openRanking() {
   list.innerHTML = '<li class="empty">Carregando…</li>';
   openSheet('ranking');
   try {
-    list.innerHTML = rankRows(await loadRanking(n));
+    const rows = await loadRanking(n);
+    let marked = false;
+    list.innerHTML = rows.length
+      ? rows
+          .map((e, i) => {
+            const me = !marked && myEntry && e.nome === myEntry.nome && e.km === myEntry.km;
+            if (me) marked = true;
+            return `<li class="${me ? 'me' : ''}"><span class="p">${i + 1}º</span><span class="nm">${esc(e.nome)}</span><span class="md">${MODE_LABEL[e.modo] ?? ''}</span><span class="k">${fmt(e.km)} km</span></li>`;
+          })
+          .join('')
+      : '<li class="empty">Ninguém entrou no ranking hoje ainda. Jogue e seja o primeiro!</li>';
   } catch {
-    list.innerHTML = NO_NET;
+    list.innerHTML = '<li class="empty">Sem conexão. Tente de novo daqui a pouco.</li>';
   }
 }
-
-/** Caixa do ranking na tela inicial: os 3 primeiros inteiros e o 4º cortado, o resto rolando dentro da caixa. */
-let boardLoading = false;
-async function refreshBoard() {
-  if (!online() || boardLoading) return;
-  boardLoading = true;
-  const list = $('boardList');
-  $('board').hidden = false;
-  if (!list.children.length) list.innerHTML = '<li class="empty">Carregando…</li>';
-  try {
-    list.innerHTML = rankRows(await loadRanking(today()));
-  } catch {
-    list.innerHTML = NO_NET;
-  } finally {
-    boardLoading = false;
-  }
-}
-// enquanto a tela inicial estiver aberta, o ranking se atualiza sozinho
-setInterval(() => {
-  if ($('home').classList.contains('on') && !document.hidden) refreshBoard();
-}, 30000);
 
 // ---------- folhas (regras, respostas, arquivo, estatísticas, duelo) ----------
 let lastFocus: HTMLElement | null = null;
@@ -828,7 +802,6 @@ document.querySelectorAll<HTMLCanvasElement>('[data-icon]').forEach((cv) => {
 $('playBtn').addEventListener('click', () => startDay(today()));
 $('rankBtn').hidden = !online();
 $('rankBtn').addEventListener('click', openRanking);
-$('boardBtn').addEventListener('click', openRanking);
 $('infBtn').addEventListener('click', startInfinite);
 
 // ---------- laço de animação ----------
