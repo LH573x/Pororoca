@@ -5,7 +5,7 @@ da foz até os Andes: quanto mais rara a resposta, maior a onda e mais longe ela
 
 - 7 perguntas (7 ondas) por rodada, cada uma de um tema diferente, 45 segundos por resposta.
 - Cada resposta vale de 100 a 1.000 km. O total (até 7.000 km) define o animal que a Capi encontrou.
-- Modos: desafio do dia (igual para todos), arquivo (dias anteriores), infinito e duelo ao vivo (um link, os dois jogam ao mesmo tempo).
+- Modos: desafio do dia (igual para todos), arquivo (dias anteriores) e duelo ao vivo (um link, os dois jogam ao mesmo tempo). O modo infinito está escondido por enquanto (o código continua lá).
 - Ranking do dia: no fim de qualquer partida o jogador pode escrever o nome e entrar no ranking daquele dia.
 
 ## Rodar

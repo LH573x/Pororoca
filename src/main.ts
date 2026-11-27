@@ -838,7 +838,7 @@ document.querySelectorAll<HTMLCanvasElement>('[data-icon]').forEach((cv) => {
 $('playBtn').addEventListener('click', () => startDay(today()));
 $('rankBtn').hidden = !online();
 $('rankBtn').addEventListener('click', openRanking);
-$('infBtn').addEventListener('click', startInfinite);
+$('infBtn')?.addEventListener('click', startInfinite);
 
 // ---------- laço de animação ----------
 let last = performance.now();
