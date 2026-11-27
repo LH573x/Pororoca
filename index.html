@@ -18,6 +18,7 @@
    <span class="sp"></span>
    <button class="ico" data-rules aria-label="Regras">?</button>
    <button class="ico" id="archBtn" aria-label="Arquivo"><svg viewBox="0 0 11 11"><path d="M1 2h9v8H1z" fill="#fff"/><path d="M1 2h9v1H1zM1 3h1v7H1zM9 3h1v7H9zM2 9h7v1H2zM1 4h9v1H1zM3 1h1v2H3zM7 1h1v2H7z" fill="#2d2017"/><path d="M3 6h1v1H3zM5 6h1v1H5zM7 6h1v1H7z" fill="#f08a2c"/></svg></button>
+   <button class="ico" id="rankBtn" aria-label="Ranking de hoje" hidden><svg viewBox="0 0 11 11"><path d="M2 1h7v1H2zM1 2h2v1H1zM8 2h2v1H8zM1 3h1v2H1zM9 3h1v2H9zM2 5h1v1H2zM8 5h1v1H8zM3 2h5v4H3zM4 6h3v1H4zM5 7h1v1H5zM3 8h5v1H3zM2 9h7v1H2z" fill="#2d2017"/><path d="M4 3h1v2H4z" fill="#f08a2c"/></svg></button>
    <button class="ico" id="statsBtn" aria-label="Estatísticas"><svg viewBox="0 0 11 11"><path d="M1 6h2v4H1zM4.5 2h2v8h-2zM8 4h2v6H8z" fill="#2d2017"/></svg></button>
   </div>
   <h1 class="logo">Pororoca</h1>
@@ -39,6 +40,7 @@
     <button class="ico" data-rules aria-label="Regras">?</button>
    </div>
    <div class="bar" id="timer"><i id="bar"></i></div>
+   <p class="rv" id="rv" hidden></p>
    <p class="theme" id="qtheme"></p>
    <h2 class="qtext" id="qtext" aria-live="polite"></h2>
   </div>
@@ -60,6 +62,11 @@
   <p class="km"><span id="kmv">0</span><small>km</small></p>
   <p class="animal" id="animal"><canvas id="anCv"></canvas><span id="anName"></span></p>
   <p class="vs" id="vs" hidden></p>
+  <form class="rank" id="rankForm" autocomplete="off" hidden>
+   <input id="rankName" class="px" maxlength="20" placeholder="seu nome" aria-label="Seu nome no ranking" enterkeyhint="send">
+   <button class="sec px" id="rankGo">Ranking</button>
+  </form>
+  <p class="rankmsg" id="rankMsg" hidden></p>
   <div class="map"><p class="maptitle">Rio Amazonas</p><div class="box" id="mapBox"><canvas id="mapCv"></canvas></div></div>
   <div class="bars" id="bars"></div>
   <button class="play px" id="shareBtn">Compartilhar</button>
@@ -109,7 +116,18 @@
   <div class="panel">
    <div class="top"><h2>Duelo</h2><span class="sp"></span><button class="ico" data-close aria-label="Fechar"><svg viewBox="0 0 9 9"><path d="M1 1h1v1H1zM2 2h1v1H2zM3 3h1v1H3zM4 4h1v1H4zM5 5h1v1H5zM6 6h1v1H6zM7 7h1v1H7zM7 1h1v1H7zM6 2h1v1H6zM5 3h1v1H5zM3 5h1v1H3zM2 6h1v1H2zM1 7h1v1H1z" fill="#2d2017"/></svg></button></div>
    <p class="lead" id="duelText"></p>
+   <div class="link" id="duelLink" hidden><input id="duelUrl" readonly aria-label="Link do duelo"><button class="sec px" id="duelCopy">Copiar</button></div>
+   <p class="wait" id="duelWait" hidden></p>
    <button class="play px" id="duelGo">Jogar</button>
+  </div>
+ </div>
+
+ <!-- Ranking do dia -->
+ <div class="sheet" id="ranking" role="dialog" aria-modal="true" aria-label="Ranking de hoje">
+  <div class="panel">
+   <div class="top"><h2>Ranking de hoje</h2><span class="sp"></span><button class="ico" data-close aria-label="Fechar"><svg viewBox="0 0 9 9"><path d="M1 1h1v1H1zM2 2h1v1H2zM3 3h1v1H3zM4 4h1v1H4zM5 5h1v1H5zM6 6h1v1H6zM7 7h1v1H7zM7 1h1v1H7zM6 2h1v1H6zM5 3h1v1H5zM3 5h1v1H3zM2 6h1v1H2zM1 7h1v1H1z" fill="#2d2017"/></svg></button></div>
+   <p class="sub" id="rankDay"></p>
+   <ol class="rk" id="rankList"></ol>
   </div>
  </div>
 

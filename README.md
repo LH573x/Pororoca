@@ -5,7 +5,8 @@ da foz até os Andes: quanto mais rara a resposta, maior a onda e mais longe ela
 
 - 7 perguntas (7 ondas) por rodada, cada uma de um tema diferente, 45 segundos por resposta.
 - Cada resposta vale de 100 a 1.000 km. O total (até 7.000 km) define o animal que a Capi encontrou.
-- Modos: desafio do dia (igual para todos), arquivo (dias anteriores), infinito e duelo (link para um amigo jogar as mesmas perguntas).
+- Modos: desafio do dia (igual para todos), arquivo (dias anteriores), infinito e duelo ao vivo (um link, os dois jogam ao mesmo tempo).
+- Ranking do dia: no fim de qualquer partida o jogador pode escrever o nome e entrar no ranking daquele dia.
 
 ## Rodar
 
@@ -19,6 +20,24 @@ npm run build      # gera a pasta dist/
 
 O site é estático. A cada push na `main`, o GitHub Actions testa e publica no GitHub Pages
 (ative em *Settings → Pages → Source: GitHub Actions*).
+
+## Duelo ao vivo e ranking do dia
+
+Os dois usam o Firebase Realtime Database (plano gratuito), sem biblioteca: só REST e EventSource (`src/online.ts`).
+
+1. Em console.firebase.google.com, crie um projeto e, nele, um **Realtime Database**.
+2. Na aba **Regras** do banco, cole o conteúdo de `database.rules.json` e publique.
+3. Coloque o endereço do banco em `ONLINE_URL` (`src/config.ts`).
+
+Com `ONLINE_URL` vazio, o duelo volta a ser por link (um joga, depois o outro) e o botão do ranking some.
+
+- Duelo (`src/live.ts`): quem cria a sala sorteia as 7 perguntas; quando o amigo entra pelo link, os dois veem uma contagem
+  e começam juntos. Cada pergunta começa na mesma hora (do servidor) para os dois; a próxima só vem quando os dois
+  responderam, ou 4 s depois do fim do tempo se um sumiu.
+- Ranking (`src/ranking.ts`): `ranking/<número do dia>`, com nome, km, modo e hora. Cada partida entra uma vez.
+
+Para testar sem conta: `npm run servidor-teste` (imitação do Firebase na porta 9000) e
+`VITE_ONLINE_URL=http://localhost:9000 npm run dev`. `scripts/e2e-duelo.ts` joga um duelo com duas janelas.
 
 ## Como as respostas são conferidas
 
@@ -114,4 +133,5 @@ arquivo com todas as perguntas, respostas e pontos, para revisão.
 - `src/rarity.ts`: nível de cada resposta
 - `src/round.ts`, `src/random.ts`, `src/day.ts`: sorteio da rodada e número do dia
 - `src/scene.ts`, `src/map.ts`, `src/sprites.ts`: pixel art (Capi, onda e mapa do rio)
+- `src/live.ts`, `src/online.ts`, `src/ranking.ts`: duelo ao vivo e ranking do dia
 - `scripts/e2e-smoke.ts`: joga uma rodada inteira no Chrome (opcional)
