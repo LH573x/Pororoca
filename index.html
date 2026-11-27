@@ -18,7 +18,7 @@
    <span class="sp"></span>
    <button class="ico" data-rules aria-label="Regras">?</button>
    <button class="ico" id="archBtn" aria-label="Arquivo"><svg viewBox="0 0 11 11"><path d="M1 2h9v8H1z" fill="#fff"/><path d="M1 2h9v1H1zM1 3h1v7H1zM9 3h1v7H9zM2 9h7v1H2zM1 4h9v1H1zM3 1h1v2H3zM7 1h1v2H7z" fill="#2d2017"/><path d="M3 6h1v1H3zM5 6h1v1H5zM7 6h1v1H7z" fill="#f08a2c"/></svg></button>
-   <button class="ico" id="rankBtn" aria-label="Ranking de hoje" hidden><svg viewBox="0 0 11 11"><path d="M2 1h7v1H2zM1 2h2v1H1zM8 2h2v1H8zM1 3h1v2H1zM9 3h1v2H9zM2 5h1v1H2zM8 5h1v1H8zM3 2h5v4H3zM4 6h3v1H4zM5 7h1v1H5zM3 8h5v1H3zM2 9h7v1H2z" fill="#2d2017"/><path d="M4 3h1v2H4z" fill="#f08a2c"/></svg></button>
+   <button class="ico trophy" id="rankBtn" aria-label="Ranking" hidden><svg viewBox="0 0 11 11"><path d="M2 1h7v1H2zM1 2h2v1H1zM8 2h2v1H8zM1 3h1v2H1zM9 3h1v2H9zM2 5h1v1H2zM8 5h1v1H8zM3 2h5v4H3zM4 6h3v1H4zM5 7h1v1H5zM3 8h5v1H3zM2 9h7v1H2z" fill="#2d2017"/><path d="M4 3h1v2H4z" fill="#f08a2c"/></svg><span id="rankTop"></span></button>
    <button class="ico" id="statsBtn" aria-label="Estatísticas"><svg viewBox="0 0 11 11"><path d="M1 6h2v4H1zM4.5 2h2v8h-2zM8 4h2v6H8z" fill="#2d2017"/></svg></button>
   </div>
   <h1 class="logo">Pororoca</h1>
@@ -28,10 +28,6 @@
    <button class="sec px" id="infBtn">Infinito</button>
    <button class="sec px" id="duelBtn">Duelo</button>
   </div>
-  <section class="board" id="board" aria-label="Ranking de hoje" hidden>
-   <button class="bt" id="boardBtn">Ranking de hoje<span>ver tudo</span></button>
-   <ol class="rk" id="boardList"></ol>
-  </section>
   <p class="credit">desenvolvido por Luiz Hong</p>
  </section>
 
@@ -127,9 +123,10 @@
  </div>
 
  <!-- Ranking do dia -->
- <div class="sheet" id="ranking" role="dialog" aria-modal="true" aria-label="Ranking de hoje">
+ <div class="sheet" id="ranking" role="dialog" aria-modal="true" aria-label="Ranking">
   <div class="panel">
-   <div class="top"><h2>Ranking de hoje</h2><span class="sp"></span><button class="ico" data-close aria-label="Fechar"><svg viewBox="0 0 9 9"><path d="M1 1h1v1H1zM2 2h1v1H2zM3 3h1v1H3zM4 4h1v1H4zM5 5h1v1H5zM6 6h1v1H6zM7 7h1v1H7zM7 1h1v1H7zM6 2h1v1H6zM5 3h1v1H5zM3 5h1v1H3zM2 6h1v1H2zM1 7h1v1H1z" fill="#2d2017"/></svg></button></div>
+   <div class="top"><h2>Ranking</h2><span class="sp"></span><button class="ico" data-close aria-label="Fechar"><svg viewBox="0 0 9 9"><path d="M1 1h1v1H1zM2 2h1v1H2zM3 3h1v1H3zM4 4h1v1H4zM5 5h1v1H5zM6 6h1v1H6zM7 7h1v1H7zM7 1h1v1H7zM6 2h1v1H6zM5 3h1v1H5zM3 5h1v1H3zM2 6h1v1H2zM1 7h1v1H1z" fill="#2d2017"/></svg></button></div>
+   <div class="tabs" role="tablist"><button class="px on" role="tab" data-tab="hoje" aria-selected="true">Hoje</button><button class="px" role="tab" data-tab="sempre" aria-selected="false">Todos os tempos</button></div>
    <p class="sub" id="rankDay"></p>
    <ol class="rk" id="rankList"></ol>
   </div>

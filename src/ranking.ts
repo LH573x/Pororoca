@@ -1,5 +1,6 @@
 /** Ranking do dia: cada partida terminada pode entrar com o nome do jogador. */
-import { get, post, SERVER_TIME } from './online';
+import { get, patch, put, SERVER_TIME } from './online';
+import { randomSeed } from './random';
 import type { Mode } from './types';
 
 export interface RankEntry {
@@ -28,12 +29,29 @@ export async function loadRanking(day: number): Promise<RankEntry[]> {
   return sortRanking(Object.values(data ?? {}).filter((e) => e && typeof e.km === 'number'));
 }
 
-/** Grava e devolve a posição (1 = primeiro). */
+/** Entrada do ranking de todos os tempos: a mesma, com o número do dia. */
+export interface HistoryEntry extends RankEntry {
+  dia: number;
+}
+
+/** As 100 melhores partidas desde o começo do jogo. */
+export async function loadHistory(): Promise<HistoryEntry[]> {
+  const data = await get<Record<string, HistoryEntry> | null>('historia', { orderBy: '"km"', limitToLast: '100' });
+  return sortRanking(Object.values(data ?? {}).filter((e) => e && typeof e.km === 'number')) as HistoryEntry[];
+}
+
+/** Grava no ranking do dia e no de todos os tempos, e devolve a posição no dia (1 = primeiro). */
 export async function submitScore(day: number, nome: string, km: number, modo: Mode): Promise<number> {
-  const { name } = await post<{ name: string }>(`ranking/${day}`, { nome, km, modo, em: SERVER_TIME });
+  const id = Date.now().toString(36) + randomSeed();
+  const entry = { nome, km, modo, em: SERVER_TIME };
+  try {
+    await patch('', { [`ranking/${day}/${id}`]: entry, [`historia/${id}`]: { ...entry, dia: day } });
+  } catch {
+    // servidor ainda com as regras antigas (sem "historia"): grava só no dia
+    await put(`ranking/${day}/${id}`, entry);
+  }
   const list = await loadRanking(day);
-  const all = await get<Record<string, RankEntry> | null>(`ranking/${day}/${name}`).catch(() => null);
-  const mine = all as RankEntry | null;
+  const mine = await get<RankEntry | null>(`ranking/${day}/${id}`).catch(() => null);
   const pos = mine ? list.findIndex((e) => e.em === mine.em && e.nome === mine.nome && e.km === mine.km) : -1;
   return pos >= 0 ? pos + 1 : list.filter((e) => e.km > km).length + 1;
 }

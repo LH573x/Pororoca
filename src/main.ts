@@ -12,7 +12,7 @@ import { drawMap, labelMap } from './map';
 import { matchAnswer } from './match';
 import { LiveDuel, other, pickOf, picksOf, rivalDone, startOf } from './live';
 import { online } from './online';
-import { cleanName, loadRanking, MODE_LABEL, submitScore } from './ranking';
+import { cleanName, loadHistory, loadRanking, MODE_LABEL, submitScore } from './ranking';
 import { levelFor, noStats, type QuestionStats, type StatsSource } from './rarity';
 import { randomSeed } from './random';
 import { pickRound } from './round';
@@ -97,7 +97,7 @@ function refreshHome() {
   if (saved?.done) btn.textContent = `Hoje: ${fmt(totalKm(saved.picks))} km`;
   else if (saved?.picks.length || saved?.pendingAt) btn.textContent = 'Continuar';
   else btn.textContent = 'Jogar';
-  refreshBoard();
+  refreshLeader();
 }
 
 // ---------- começar rodadas ----------
@@ -729,52 +729,62 @@ $('rankMsg').addEventListener('click', (e) => {
   if ((e.target as HTMLElement).closest('[data-rank]')) openRanking();
 });
 
-/** Linhas do ranking (folha e caixa da tela inicial). */
-function rankRows(rows: Awaited<ReturnType<typeof loadRanking>>) {
-  if (!rows.length) return '<li class="empty">Ninguém no ranking hoje ainda. Jogue e seja o primeiro!</li>';
-  let marked = false;
-  return rows
-    .map((e, i) => {
-      const me = !marked && myEntry && e.nome === myEntry.nome && e.km === myEntry.km;
-      if (me) marked = true;
-      return `<li class="${me ? 'me' : ''}"><span class="p">${i + 1}º</span><span class="nm">${esc(e.nome)}</span><span class="md">${MODE_LABEL[e.modo] ?? ''}</span><span class="k">${fmt(e.km)} km</span></li>`;
-    })
-    .join('');
-}
-const NO_NET = '<li class="empty">Sem conexão. Tente de novo daqui a pouco.</li>';
+/** Aba aberta na folha do ranking. */
+let rankTab: 'hoje' | 'sempre' = 'hoje';
 
-async function openRanking() {
+function openRanking() {
+  openSheet('ranking');
+  showRankTab(rankTab);
+}
+
+async function showRankTab(tab: 'hoje' | 'sempre') {
+  rankTab = tab;
+  document.querySelectorAll<HTMLElement>('#ranking [data-tab]').forEach((b) => {
+    b.classList.toggle('on', b.dataset.tab === tab);
+    b.setAttribute('aria-selected', String(b.dataset.tab === tab));
+  });
   const n = today();
-  $('rankDay').textContent = `${formatDay(isoOfDay(n))} · todas as partidas do dia`;
+  $('rankDay').textContent = tab === 'hoje' ? `${formatDay(isoOfDay(n))} · todas as partidas do dia` : 'As melhores partidas desde o começo do jogo';
   const list = $('rankList');
   list.innerHTML = '<li class="empty">Carregando…</li>';
-  openSheet('ranking');
   try {
-    list.innerHTML = rankRows(await loadRanking(n));
+    const rows = tab === 'hoje' ? await loadRanking(n) : await loadHistory();
+    if (rankTab !== tab) return; // trocou de aba enquanto carregava
+    let marked = false;
+    list.innerHTML = rows.length
+      ? rows
+          .map((e, i) => {
+            const me = !marked && myEntry && e.nome === myEntry.nome && e.km === myEntry.km;
+            if (me) marked = true;
+            // no de todos os tempos, o dia em que a partida foi jogada no lugar do modo
+            const tag = 'dia' in e ? formatDay(isoOfDay(e.dia as number)).slice(0, 5) : (MODE_LABEL[e.modo] ?? '');
+            return `<li class="${me ? 'me' : ''}"><span class="p">${i + 1}º</span><span class="nm">${esc(e.nome)}</span><span class="md">${tag}</span><span class="k">${fmt(e.km)} km</span></li>`;
+          })
+          .join('')
+      : `<li class="empty">${tab === 'hoje' ? 'Ninguém entrou no ranking hoje ainda. Jogue e seja o primeiro!' : 'Ninguém entrou no ranking ainda. Jogue e seja o primeiro!'}</li>`;
   } catch {
-    list.innerHTML = NO_NET;
+    if (rankTab === tab) list.innerHTML = '<li class="empty">Sem conexão. Tente de novo daqui a pouco.</li>';
   }
 }
+document.querySelectorAll<HTMLElement>('#ranking [data-tab]').forEach((b) => b.addEventListener('click', () => showRankTab(b.dataset.tab as 'hoje' | 'sempre')));
 
-/** Caixa do ranking na tela inicial: os 3 primeiros inteiros e o 4º cortado, o resto rolando dentro da caixa. */
-let boardLoading = false;
-async function refreshBoard() {
-  if (!online() || boardLoading) return;
-  boardLoading = true;
-  const list = $('boardList');
-  $('board').hidden = false;
-  if (!list.children.length) list.innerHTML = '<li class="empty">Carregando…</li>';
+/** Botão do troféu: mostra o nome do primeiro colocado do dia. */
+let leaderLoading = false;
+async function refreshLeader() {
+  if (!online() || leaderLoading) return;
+  leaderLoading = true;
   try {
-    list.innerHTML = rankRows(await loadRanking(today()));
+    const top = (await loadRanking(today()))[0];
+    $('rankTop').textContent = top ? top.nome : '';
+    $('rankBtn').setAttribute('aria-label', top ? `Ranking: ${top.nome} está em 1º hoje` : 'Ranking');
   } catch {
-    list.innerHTML = NO_NET;
+    /* sem rede: fica o que estava */
   } finally {
-    boardLoading = false;
+    leaderLoading = false;
   }
 }
-// enquanto a tela inicial estiver aberta, o ranking se atualiza sozinho
 setInterval(() => {
-  if ($('home').classList.contains('on') && !document.hidden) refreshBoard();
+  if ($('home').classList.contains('on') && !document.hidden) refreshLeader();
 }, 30000);
 
 // ---------- folhas (regras, respostas, arquivo, estatísticas, duelo) ----------
@@ -828,7 +838,6 @@ document.querySelectorAll<HTMLCanvasElement>('[data-icon]').forEach((cv) => {
 $('playBtn').addEventListener('click', () => startDay(today()));
 $('rankBtn').hidden = !online();
 $('rankBtn').addEventListener('click', openRanking);
-$('boardBtn').addEventListener('click', openRanking);
 $('infBtn').addEventListener('click', startInfinite);
 
 // ---------- laço de animação ----------
